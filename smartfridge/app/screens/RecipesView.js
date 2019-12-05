@@ -12,10 +12,18 @@ import {
   TouchableHighlight,
   Image,
   Dimensions,
+  ActivityIndicator,
 } from 'react-native';
 // import SearchBar from 'react-native-dynamic-search-bar';
 import {SearchBar} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import {
+  updateIngredient,
+  deleteIngredient,
+  queryAllIngredients,
+  insertNewIngredient,
+} from '../models/IngredientSchemas';
+import realm from '../models/IngredientSchemas';
 import NavigationService from '../navigation/NavigationService.js';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
@@ -75,15 +83,37 @@ class Recipe extends React.PureComponent {
 }
 
 class RecipesView extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isLoading: true,
+      ingredientList: [],
+      search: '',
+    };
+    this._reloadData();
+    realm.addListener('change', () => {
+      console.log('changed in realm');
+      this._reloadData();
+    });
+  }
+
   static navigationOptions = {
     title: 'Recipes',
   };
 
-  state = {
-    search: '',
+  _reloadData = () => {
+    queryAllIngredients()
+      .then(ingredientList => {
+        this.setState({ingredientList});
+      })
+      .catch(error => {
+        this.setState({ingredientList: []});
+        console.log(`Error occurs during reload data: ${error}`);
+      });
+    console.log('Data reloaded - Recipes View');
   };
 
-  findRecipes(search) {
+  findRecipes = search => {
     if (search === '') {
       // Show all Recipes
       this.data.map(recipe => {
@@ -99,7 +129,7 @@ class RecipesView extends Component {
         }
       });
     }
-  }
+  };
 
   updateSearch = search => {
     this.setState({search});
@@ -153,20 +183,17 @@ class RecipesView extends Component {
   );
 
   render() {
-    const {search} = this.state;
-
+    const {search, isLoading} = this.state;
+    if (isLoading) {
+      return (
+        <View style={styles.container}>
+          <ActivityIndicator />
+          <Text style={styles.loadingText}>Loading...</Text>
+        </View>
+      );
+    }
     return (
-      <View>
-        {/* <SearchBar
-          placeholder="Search here"
-          onChangeText={text => {
-            console.log(text);
-          }}
-          onPressCancel={() => {
-            this.filterList('');
-          }}
-          onPress={() => alert('onPress')}
-        /> */}
+      <View style={styles.container}>
         <SearchBar
           platform={Platform.OS === 'ios' ? 'ios' : 'android'}
           inputContainerStyle={{backgroundColor: '#eaeaea'}}
@@ -176,8 +203,6 @@ class RecipesView extends Component {
           value={search}
         />
         <FlatList
-          // columnWrapperStyle={{ alignItem: 'flex-start' }}
-          //   style={styles.list}
           data={this.tempData}
           renderItem={this.renderItem}
           keyExtractor={this._keyExtractor}
@@ -191,10 +216,13 @@ class RecipesView extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  //   list: {
-  //     height: 100,
-  //   },
+  loadingText: {
+    fontSize: 20,
+    paddingTop: 10,
+  },
   ingredientContainer: {},
   itemContainer: {
     flex: 1,

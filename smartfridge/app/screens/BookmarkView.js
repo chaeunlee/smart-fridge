@@ -12,13 +12,18 @@ import {
   Image,
   Dimensions,
 } from 'react-native';
-// import SearchBar from 'react-native-dynamic-search-bar';
-// import {SearchBar} from 'react-native-elements';
+import {
+  insertNewBookmark,
+  queryAllBookmarks,
+  deleteAllBookmarks,
+  deleteBookmark,
+} from '../models/BookmarkSchemas';
+import realm from '../models/BookmarkSchemas';
 import NavigationService from '../navigation/NavigationService.js';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 
-class Recipe extends React.PureComponent {
+class BookmarkedRecipe extends React.PureComponent {
   pressIngredient = () => {
     // this.props.navigation.navigate('IngredientDetailView');
     // NavigationService.navigate('IngredientDetailView');
@@ -44,6 +49,31 @@ class Recipe extends React.PureComponent {
 }
 
 class BookmarkView extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      BookmarkList: [],
+    };
+    this._reloadData();
+    realm.addListener('change', () => {
+      console.log('changed in realm');
+      this._reloadData();
+    });
+  }
+
+  _reloadData = () => {
+    queryAllBookmarks()
+      .then(bookmarkList => {
+        this.setState({bookmarkList});
+        this.setState({searchingIngredient: bookmarkList});
+      })
+      .catch(error => {
+        this.setState({bookmarkList: []});
+        console.log(`Error occurs during reload data: ${error}`);
+      });
+    console.log('Data reloaded - Bookmark View');
+  };
+
   static navigationOptions = {
     title: 'Bookmark',
   };
@@ -78,7 +108,7 @@ class BookmarkView extends Component {
   _keyExtractor = (item, index) => item.id;
 
   renderItem = ({item}) => (
-    <Recipe
+    <BookmarkedRecipe
       id={item.id}
       name={item.label}
       image={item.image}

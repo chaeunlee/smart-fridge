@@ -27,7 +27,7 @@ export const IngredientListSchema = {
 };
 
 const databaseOptions = {
-  path: 'smartfridge.realm',
+  path: 'smartfridge.ingredient.realm',
   schema: [IngredientListSchema, IngredientSchema],
   schemaVersion: 0, //oprtional
 };
@@ -46,7 +46,7 @@ export const insertNewIngredient = newIngredient =>
   });
 
 // Not completed yet
-export const updateIngredient = Ingredient =>
+export const updateIngredient = ingredient =>
   new Promise((resolve, reject) => {
     Realm.open(databaseOptions)
       .then(realm => {
@@ -54,23 +54,23 @@ export const updateIngredient = Ingredient =>
           // Get a TodoList from specific ID
           let updatingIngredient = realm.objectForPrimaryKey(
             INGREDIENT_SCHEMA,
-            Ingredient.id,
+            ingredient.id,
           );
-          updateIngredient.name = Ingredient.name;
+          updateIngredient.name = ingredient.name;
           resolve();
         });
       })
       .catch(error => reject(error));
   });
 
-export const deleteIngredient = IngredientId =>
+export const deleteIngredient = ingredientId =>
   new Promise((resolve, reject) => {
     Realm.open(databaseOptions)
       .then(realm => {
         realm.write(() => {
           let deletingIngredient = realm.objectForPrimaryKey(
             INGREDIENT_SCHEMA,
-            IngredientId,
+            ingredientId,
           );
           realm.delete(deletingIngredient);
           resolve();

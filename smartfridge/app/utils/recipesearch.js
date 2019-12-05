@@ -1,12 +1,14 @@
-import React from "react";
-import { StyleSheet, View, ActivityIndicator, Text } from "react-native";
+import React from 'react';
+import {StyleSheet, View, ActivityIndicator, Text} from 'react-native';
+
+const searchRecipesByIngredients = ingredientList => {};
 
 export default class Source extends React.Component {
-  static navigationOptions = ({ navigation }) => {
+  static navigationOptions = ({navigation}) => {
     return {
-      title: "Source Listing",
-      headerStyle: { backgroundColor: "#fff" },
-      headerTitleStyle: { textAlign: "center", flex: 1 }
+      title: 'Source Listing',
+      headerStyle: {backgroundColor: '#fff'},
+      headerTitleStyle: {textAlign: 'center', flex: 1},
     };
   };
   constructor(props) {
@@ -14,23 +16,23 @@ export default class Source extends React.Component {
     this.state = {
       isLoading: true,
       dataSource: null,
-      text: null
+      text: null,
     };
   }
   // fetch -> request & response
   componentDidMount() {
-    fetch("https://tasty.p.rapidapi.com/tags/list", {
-      method: "GET",
+    fetch('https://tasty.p.rapidapi.com/tags/list', {
+      method: 'GET',
       headers: {
-        "x-rapidapi-host": "tasty.p.rapidapi.com",
-        "x-rapidapi-key": "8e3a4594f8msh9b01cae7ba74d1ap171ad5jsn0a5db15ae82b"
-      }
+        'x-rapidapi-host': 'tasty.p.rapidapi.com',
+        'x-rapidapi-key': '8e3a4594f8msh9b01cae7ba74d1ap171ad5jsn0a5db15ae82b',
+      },
     })
       .then(response => response.json())
       .then(responseJson => {
         this.setState({
           isLoading: false,
-          dataSource: responseJson
+          dataSource: responseJson,
         });
       })
       .catch(err => {
@@ -63,7 +65,7 @@ export default class Source extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center"
-  }
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
