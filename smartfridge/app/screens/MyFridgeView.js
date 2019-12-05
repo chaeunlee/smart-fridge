@@ -86,6 +86,7 @@ class MyFridgeView extends Component {
           }}
         />
       ),
+      // tabBarIcon: <Icon name="fridge" size={40} />,
     };
   };
 
