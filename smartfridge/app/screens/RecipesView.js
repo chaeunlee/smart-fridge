@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, PureComponent} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -9,16 +9,25 @@ import {
   Platform,
   FlatList,
   TouchableOpacity,
+  TouchableHighlight,
   Image,
   Dimensions,
 } from 'react-native';
 // import SearchBar from 'react-native-dynamic-search-bar';
 import {SearchBar} from 'react-native-elements';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import NavigationService from '../navigation/NavigationService.js';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 
 class Recipe extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isBookmarked: false,
+    };
+  }
+
   pressIngredient = () => {
     // this.props.navigation.navigate('IngredientDetailView');
     // NavigationService.navigate('IngredientDetailView');
@@ -29,16 +38,38 @@ class Recipe extends React.PureComponent {
     });
   };
 
+  tabBookmark = id => {
+    this.setState({isBookmarked: !this.state.isBookmarked});
+    console.log(`id: ${id}`);
+  };
+
   render() {
     return (
-      // <View style={styles.ingredientContainer}>
-      <TouchableOpacity onPress={this.pressIngredient} style={styles.item}>
-        <Image style={styles.foodImage} source={this.props.image} />
-        <View style={styles.textBox}>
-          <Text style={styles.foodName}>{this.props.name}</Text>
+      <TouchableHighlight
+        onPress={this.pressIngredient}
+        style={styles.itemContainer}
+        activeOpacity={1}
+        underlayColor="lightgray">
+        <View style={styles.item}>
+          <View>
+            <Image style={styles.foodImage} source={this.props.image} />
+            <View style={styles.textBox}>
+              <Text style={styles.foodName}>{this.props.name}</Text>
+              <TouchableOpacity onPress={() => this.tabBookmark(this.props.id)}>
+                <Icon
+                  name={
+                    this.state.isBookmarked ? 'bookmark' : 'bookmark-border'
+                  }
+                  size={40}
+                  backgroundColor="transparent"
+                  iconStyle={{marginTop: 5}}
+                  color="#5ccaf0"
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
-      </TouchableOpacity>
-      // </View>
+      </TouchableHighlight>
     );
   }
 }
@@ -165,20 +196,27 @@ const styles = StyleSheet.create({
   //     height: 100,
   //   },
   ingredientContainer: {},
-  item: {
+  itemContainer: {
     flex: 1,
     // flexDirection: 'row',
     // width: (screenWidth - 30) / 2,
+    // borderRadius: 10,
     height: 250,
-    marginVertical: 0,
-    marginHorizontal: 10,
-    // alignItems: 'center',
-    justifyContent: 'space-around',
-    paddingBottom: 5,
+    marginVertical: 5,
+    borderBottomWidth: 0.5,
+    borderBottomColor: 'lightgray',
+    // marginHorizontal: 10,
+
+    // paddingBottom: 5,
+  },
+  item: {
+    alignItems: 'center',
+    // justifyContent: 'space-around',
   },
   foodImage: {
     // flexDirection: 'row',
     // flex: 1,
+    // alignItems: 'center'
     width: screenWidth - 20,
     borderRadius: 10,
     height: 200,
@@ -188,8 +226,10 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   textBox: {
+    marginTop: 2,
     flexDirection: 'row',
-    justifyContent: 'flex-start',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
 });
 
