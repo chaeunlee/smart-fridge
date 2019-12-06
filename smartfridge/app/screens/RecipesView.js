@@ -14,7 +14,6 @@ import {
   Dimensions,
   ActivityIndicator,
 } from 'react-native';
-// import SearchBar from 'react-native-dynamic-search-bar';
 import {SearchBar} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {
@@ -172,13 +171,13 @@ class RecipesView extends Component {
         return response.json();
       })
       .then(responseJson => {
-        console.log('responseJSON: ', responseJson);
+        // console.log('responseJSON: ', responseJson);
         this.setState({
           isLoading: false,
           dataSource: responseJson,
         });
         // let tempDataList = [];
-        console.log(responseJson);
+        // console.log(responseJson);
         // for (let i = 0; i < responseJson.results.length; i++) {
         //   const tempData = {
         //     // id: responseJson[i].id,
@@ -208,6 +207,12 @@ class RecipesView extends Component {
       });
   }
 
+  componentWillFocus() {
+    console.log('FOCUSING');
+    console.log('FOCUSING');
+    console.log('FOCUSING');
+  }
+
   // findRecipes = search => {
   //   if (search === '') {
   //     // Show all Recipes
@@ -230,39 +235,6 @@ class RecipesView extends Component {
     this.setState({search});
     // this.findRecipes(search);
   };
-
-  data = [
-    {
-      id: 1,
-      image: require('../assets/food/gambas.jpg'),
-      label: 'Gambas',
-      ingredients: ['shrimp', 'garlic', 'olive oil', 'salt'],
-    },
-    {
-      id: 2,
-      image: require('../assets/food/carbonara.jpg'),
-      label: 'Carbonara',
-      ingredients: ['shrimp', 'garlic', 'olive oil', 'salt'],
-    },
-    {
-      id: 3,
-      image: require('../assets/food/salad.jpg'),
-      label: 'Salad',
-      ingredients: ['shrimp', 'garlic', 'olive oil', 'salt'],
-    },
-    {
-      id: 4,
-      image: require('../assets/food/meat.jpg'),
-      label: 'Meat',
-      ingredients: ['shrimp', 'garlic', 'olive oil', 'salt'],
-    },
-    {
-      id: 5,
-      image: require('../assets/food/vietnamfood.jpg'),
-      label: 'Vietnamfood',
-      ingredients: ['shrimp', 'garlic', 'olive oil', 'salt'],
-    },
-  ];
 
   _keyExtractor = (item, index) => item.id;
 

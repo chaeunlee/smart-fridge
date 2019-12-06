@@ -127,7 +127,7 @@ class MyFridgeView extends Component {
       id={item.id}
       name={item.name}
       // image={item.image}
-      image={require('../assets/ingredients/tomato.png')}
+      image={require(`../assets/ingredients/tomato.png`)}
       desc={item.description}
     />
   );

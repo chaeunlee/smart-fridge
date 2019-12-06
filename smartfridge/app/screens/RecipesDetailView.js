@@ -11,20 +11,84 @@ import {
   TouchableOpacity,
   Dimensions,
   Image,
+  SectionList,
 } from 'react-native';
+import NavigationService from '../navigation/NavigationService.js';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 
 class RecipesDetailView extends Component {
-  state = {
-    foodName: '',
-    foodImage: '',
-    ingredients: [],
-    steps: [],
-  };
+  constructor(props) {
+    super(props);
+    const {navigation} = this.props;
+    this.state = {
+      isLoading: true,
+      // foodId: this.props.id,
+      // foodName: this.props.name,
+      // foodImageUrl: this.props.image,
+      foodId: navigation.getParam('id'),
+      foodName: navigation.getParam('name'),
+      foodImageUrl: navigation.getParam('image'),
+      dataSource: null,
+      informations: [
+        {
+          ingredients: [],
+        },
+        {
+          steps: [],
+        },
+      ],
+      ingredients: [],
+      steps: [],
+    };
+  }
+
   static navigationOptions = {
     title: 'Detail Recipe',
   };
+
+  async componentDidMount() {
+    const foodId = this.state.foodId;
+
+    // fetch detail recipe from API by using the Id
+    console.log('FOODID: ' + foodId);
+    fetch(`https://tasty.p.rapidapi.com/recipes/detail?id=${foodId}`, {
+      method: 'GET',
+      headers: {
+        'x-rapidapi-host': 'tasty.p.rapidapi.com',
+        'x-rapidapi-key': '8e3a4594f8msh9b01cae7ba74d1ap171ad5jsn0a5db15ae82b',
+        'content-type': 'application/json',
+      },
+    })
+      .then(response => {
+        console.log(typeof response);
+        return response.json();
+      })
+      .then(responseJson => {
+        console.log('responseJSON: ', responseJson);
+        this.setState({
+          isLoading: false,
+          dataSource: responseJson,
+        });
+        console.log(responseJson);
+      })
+      // .then(() => {
+      //   for (const data of this.state.dataSource.results) {
+      //     const recipeData = {
+      //       id: data.id,
+      //       name: data.name,
+      //       image: data.thumbnail_url,
+      //     };
+      //     var joined = this.state.recipeList.concat(recipeData);
+      //     this.setState({recipeList: joined});
+      //   }
+      // })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
+  _fetchInformation = () => {};
 
   _keyExtractor = (item, index) => item.id;
 
@@ -86,7 +150,6 @@ class RecipesDetailView extends Component {
 
   render() {
     const {navigation} = this.props;
-    const state = this.state;
     const name = navigation.getParam('name');
     const image = navigation.getParam('image');
     const ingres = navigation.getParam('ingres');
@@ -97,12 +160,21 @@ class RecipesDetailView extends Component {
     return (
       <View style={styles.container}>
         <View style={styles.imageContainer}>
-          <Image style={styles.foodImage} source={image} />
+          <Image
+            style={styles.foodImage}
+            source={{uri: image, cache: 'force-cache'}}
+          />
         </View>
+        {/* <SectionList
+          sections={this.state.informations}
+          style={styles.container}
+          renderItem={this._renderItem}
+          renderSectionHeader={this._renderSection}
+        /> */}
         <View style={styles.foodNameContainer}>
           <Text style={styles.foodName}>{name}</Text>
         </View>
-        <View style={styles.ingredientContainer}>
+        {/* <View style={styles.ingredientContainer}>
           <FlatList
             // columnWrapperStyle={{ alignItem: 'flex-start' }}
             // style={{flex: 1}}
@@ -119,7 +191,7 @@ class RecipesDetailView extends Component {
             keyExtractor={this._keyExtractor}
             numColumns={1}
           />
-        </View>
+        </View> */}
       </View>
     );
   }
