@@ -1,15 +1,15 @@
 import React, {Component} from 'react';
 import {
-  SafeAreaView,
   StyleSheet,
   View,
   Text,
   FlatList,
-  TouchableOpacity,
   Dimensions,
   Image,
   ScrollView,
 } from 'react-native';
+import Ingredient from '../components/Ingredient';
+import Step from '../components/Step';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 
@@ -33,6 +33,33 @@ class RecipesDetailView extends Component {
   };
 
   async componentDidMount() {
+    // Only for Testing
+    let tempIngreList = [];
+    let tempStepsList = [];
+    tempStepsList.push('Preheat the oven to 425°F (220°C)');
+    tempStepsList.push(
+      'Remove the large, tough outer leaves from cauliflower, and reserve any smaller, tender leaves. Cut cauliflower into medium florets.',
+    );
+    tempStepsList.push(
+      'In a large bowl, toss the cauliflower florets with the olive oil, salt, pepper, za’atar, and cumin. Spread in an even layer on 2 baking sheets, making sure the florets have some space between them.',
+    );
+    tempStepsList.push(
+      'Remove the large, tough outer leaves from cauliflower, and reserve any smaller, tender leaves. Cut cauliflower into medium florets.',
+    );
+    tempStepsList.push('Enjoy!');
+    tempIngreList.push('Onion');
+    tempIngreList.push('Onion');
+    tempIngreList.push('Onion');
+    tempIngreList.push('Onion');
+    tempIngreList.push('Onion');
+    tempIngreList.push('Onion');
+    this.setState({
+      ingredients: tempIngreList,
+      steps: tempStepsList,
+    });
+
+    // Fetch API
+    /*
     const foodId = this.state.foodId;
     console.log('FOODNAME: ' + this.state.foodName);
 
@@ -77,22 +104,25 @@ class RecipesDetailView extends Component {
       .then(() => {
         console.log('FOODNAME: ' + this.state.foodName);
         console.log('INFO: ' + this.state.foodId);
+        // this.state.steps.map(step => {
+        //   console.log('STEP');
+        //   console.log(step);
+        // });
       })
       .catch(err => {
         console.log(err);
       });
+      */
   }
 
   _keyExtractor = (item, index) => item.id;
 
   _renderIngredients = ({item}) => (
-    <View style={{flex: 0.3}}>
-      <View style={styles.item}>
-        {/* <Image style={styles.ingredientImage} source={item.image} /> */}
-        {/* <Text style={styles.ingredientName}>{item.label}</Text> */}
-        <Text style={styles.ingredientName}>INGREIDNETN</Text>
-      </View>
-    </View>
+    <Ingredient
+      name={item}
+      image={require(`../assets/ingredients/tomato.png`)}
+      forMyFridgeView={false}
+    />
   );
 
   render() {
@@ -107,55 +137,30 @@ class RecipesDetailView extends Component {
               source={{uri: foodImage, cache: 'force-cache'}}
             />
           </View>
-          <View
-            style={[
-              styles.foodNameContainer,
-              // foodName.length > 20 ? {height: 90} : {height: 50},
-            ]}>
-            <Text style={styles.foodName}>{foodName}</Text>
-          </View>
-          <View style={{flex: 1}}>
-            <FlatList
-              // style={{flex: 1}}
-              data={ingredients}
-              renderItem={this._renderIngredients}
-              keyExtractor={(item, index) => index}
-              scrollEnabled={false}
-              numColumns={3}
-            />
-          </View>
           <View>
-            <Text>SFSDFSDFSD</Text>
-            <Text>SFSDFSDFSD</Text>
-            <Text>SFSDFSDFSD</Text>
-            <Text>SFSDFSDFSD</Text>
+            <View style={styles.bodyContainer}>
+              <Text style={styles.foodName}>{foodName}</Text>
+              <View style={styles.ingredientContainer}>
+                <FlatList
+                  data={ingredients}
+                  renderItem={this._renderIngredients}
+                  keyExtractor={(item, index) => index}
+                  scrollEnabled={false}
+                  numColumns={3}
+                />
+              </View>
+              <View style={styles.stepListContainer}>
+                {steps.map((step, index) => {
+                  return <Step step={step} index={index} />;
+                })}
+              </View>
+            </View>
           </View>
         </ScrollView>
       </View>
     );
   }
 }
-//render(){
-//      this.state.brandsToCompare.map(brand => <PickerModalContainer brand={brand}/>)
-// }
-const DATA = [
-  {
-    title: 'Main dishes',
-    data: ['Pizza', 'Burger', 'Risotto'],
-  },
-  {
-    title: 'Sides',
-    data: ['French Fries', 'Onion Rings', 'Fried Shrimps'],
-  },
-  {
-    title: 'Drinks',
-    data: ['Water', 'Coke', 'Beer'],
-  },
-  {
-    title: 'Desserts',
-    data: ['Cheese Cake', 'Ice Cream'],
-  },
-];
 
 const styles = StyleSheet.create({
   container: {
@@ -163,73 +168,30 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     height: 200,
-    // flex: 1,
-    alignItems: 'center',
   },
-  foodNameContainer: {
-    // flex: 1,
-    // height: 50,
-    width: screenWidth,
-    paddingLeft: 8,
-    // backgroundColor: 'red',
-  },
-  ingredientContainer: {
-    // flex: 1,
-    // flexDirection: 'column',
-    // alignItems: 'center',
-    // justifyContent: 'space-around',
-    width: screenWidth,
-    // padding: 10,
-  },
-  ingredientName: {
-    fontSize: 15,
-  },
-  ingredientImage: {
-    // flexDirection: 'row',
-    width: 35,
-    height: 35,
-  },
-  descriptionContainer: {
-    // alignItems: 'center',
-    paddingLeft: 12,
-    justifyContent: 'center',
-  },
-  item: {
-    flex: 0.3,
-    flexDirection: 'column',
-    // width: (screenWidth - 30) / 3,
-    height: 70,
-    marginVertical: 5,
+  bodyContainer: {
     marginHorizontal: 10,
-    backgroundColor: '#f8f8f8',
-    padding: 20,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  stepContainer: {
     flex: 1,
-    alignContent: 'center',
-    justifyContent: 'center',
+    alignItems: 'center',
   },
-  stepText: {
-    fontSize: 20,
-    fontWeight: '300',
+
+  ingredientContainer: {
+    flex: 1,
+    width: screenWidth - 30,
+    paddingTop: 10,
+  },
+  stepListContainer: {
+    flex: 1,
+    marginVertical: 10,
+    marginHorizontal: 30,
   },
   foodImage: {
-    // flexDirection: 'row',
-    // flex: 1,
-    width: screenWidth - 20,
-    borderRadius: 15,
+    width: screenWidth,
     height: 200,
   },
   foodName: {
     fontSize: 35,
-    fontWeight: '600',
-  },
-  textBox: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
+    fontWeight: '500',
   },
 });
 

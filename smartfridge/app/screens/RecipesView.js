@@ -1,11 +1,8 @@
-import React, {Component, PureComponent} from 'react';
+import React, {Component} from 'react';
 import {
-  SafeAreaView,
   StyleSheet,
   View,
   Text,
-  StatusBar,
-  Button,
   Platform,
   FlatList,
   TouchableOpacity,
@@ -22,75 +19,10 @@ import {
   queryAllIngredients,
   insertNewIngredient,
 } from '../models/IngredientSchemas';
-import realm from '../models/IngredientSchemas';
 import NavigationService from '../navigation/NavigationService.js';
+import Recipe from '../components/Recipe';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
-
-class Recipe extends React.PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isBookmarked: false,
-    };
-  }
-
-  pressIngredient = () => {
-    // this.props.navigation.navigate('IngredientDetailView');
-    // NavigationService.navigate('IngredientDetailView');
-    NavigationService.navigateForRecipesView('DetailRecipes', {
-      id: this.props.id,
-      name: this.props.name,
-      image: this.props.image,
-    });
-  };
-
-  tabBookmark = id => {
-    this.setState({isBookmarked: !this.state.isBookmarked});
-    console.log(`id: ${id}`);
-  };
-
-  render() {
-    return (
-      <TouchableHighlight
-        onPress={this.pressIngredient}
-        style={[
-          styles.itemContainer,
-          this.props.name.length > 30 ? {height: 280} : {height: 250},
-        ]}
-        activeOpacity={1}
-        underlayColor="lightgray">
-        <View style={styles.item}>
-          <View>
-            <Image
-              style={styles.foodImage}
-              source={{uri: this.props.image, cache: 'force-cache'}}
-            />
-            <View style={styles.labelContainer}>
-              <View style={styles.foodNameContainer}>
-                <Text style={styles.foodName}>{this.props.name}</Text>
-              </View>
-              <View style={styles.bookmarkContainer}>
-                <TouchableOpacity
-                  onPress={() => this.tabBookmark(this.props.id)}>
-                  <Icon
-                    name={
-                      this.state.isBookmarked ? 'bookmark' : 'bookmark-border'
-                    }
-                    size={40}
-                    backgroundColor="transparent"
-                    iconStyle={{marginTop: 5}}
-                    color="#5ccaf0"
-                  />
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-        </View>
-      </TouchableHighlight>
-    );
-  }
-}
 
 class RecipesView extends Component {
   constructor(props) {
@@ -144,6 +76,23 @@ class RecipesView extends Component {
   };
 
   async componentDidMount() {
+    // Temporary Data
+    let tempList = [];
+    let tempData = {
+      id: 1,
+      name: 'Roasted Cauliflower With Tahini Yogurt',
+      image:
+        'https://img.buzzfeed.com/thumbnailer-prod-us-east-1/video-api/assets/240933.jpg',
+    };
+    tempList.push(tempData);
+
+    this.setState({
+      isLoading: false,
+      recipeList: tempList,
+    });
+
+    // Fetch API
+    /*
     fetch(
       `https://tasty.p.rapidapi.com/recipes/list?tags=tasty_cookbook&q=${this._getIngredientUrl()}&from=4&sizes=${2}`,
       {
@@ -205,12 +154,7 @@ class RecipesView extends Component {
       .catch(err => {
         console.log(err);
       });
-  }
-
-  componentWillFocus() {
-    console.log('FOCUSING');
-    console.log('FOCUSING');
-    console.log('FOCUSING');
+      */
   }
 
   // findRecipes = search => {
@@ -233,7 +177,6 @@ class RecipesView extends Component {
 
   updateSearch = search => {
     this.setState({search});
-    // this.findRecipes(search);
   };
 
   _keyExtractor = (item, index) => item.id;
@@ -289,55 +232,6 @@ const styles = StyleSheet.create({
   loadingText: {
     fontSize: 20,
     paddingTop: 10,
-  },
-  ingredientContainer: {},
-  itemContainer: {
-    flex: 1,
-    // flexDirection: 'row',
-    // width: (screenWidth - 30) / 2,
-    // borderRadius: 10,
-    // height: 250,
-    marginVertical: 5,
-    borderBottomWidth: 0.5,
-    borderBottomColor: 'lightgray',
-    // marginHorizontal: 10,
-
-    // paddingBottom: 5,
-  },
-  item: {
-    alignItems: 'center',
-    // justifyContent: 'space-around',
-  },
-  foodImage: {
-    // flexDirection: 'row',
-    // flex: 1,
-    // alignItems: 'center'
-    width: screenWidth - 20,
-    borderRadius: 10,
-    height: 200,
-  },
-  foodName: {
-    fontSize: 25,
-    fontWeight: '600',
-    flexWrap: 'wrap',
-    flexShrink: 1,
-  },
-  flatList: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  labelContainer: {
-    marginTop: 2,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  foodNameContainer: {
-    flex: 1,
-  },
-  bookmarkContainer: {
-    flex: 0.15,
   },
 });
 

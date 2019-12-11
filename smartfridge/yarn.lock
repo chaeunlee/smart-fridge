@@ -5645,16 +5645,6 @@ react-lifecycles-compat@^3.0.4:
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
   integrity sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==
 
-react-native-dynamic-search-bar@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/react-native-dynamic-search-bar/-/react-native-dynamic-search-bar-0.2.1.tgz#8d5537d855b84dbf968c10c56bc461eae29c4fa5"
-  integrity sha512-4VKY5aCSFwtAwWngwBqbzuen8gwOpssIZ3GA5mdukTSvNVYY7a128oA6nLBQmXxXx7mj/N2Sbgk03OXbAi6LjQ==
-
-react-native-dynamic-vector-icons@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/react-native-dynamic-vector-icons/-/react-native-dynamic-vector-icons-0.2.1.tgz#6859d0aac7e00f831a30de612c905bd4d08da555"
-  integrity sha512-C5BZ3rxkRAkzCOIwZSlZReNPfco8smWHicnKc5Z60nr7ibyaV/6EugDmf/eUuHAl4qdsYnRdSm7q1Ag627ZARQ==
-
 react-native-elements@^1.2.7:
   version "1.2.7"
   resolved "https://registry.yarnpkg.com/react-native-elements/-/react-native-elements-1.2.7.tgz#1eca2db715c41722aeb67aea62bd2a4621adb134"
@@ -5668,6 +5658,11 @@ react-native-elements@^1.2.7:
     prop-types "^15.7.2"
     react-native-ratings "^6.3.0"
     react-native-status-bar-height "^2.2.0"
+
+react-native-floating-action@^1.19.1:
+  version "1.19.1"
+  resolved "https://registry.yarnpkg.com/react-native-floating-action/-/react-native-floating-action-1.19.1.tgz#fc3dcd0441ecbaf2d870b71f6db27f2db0f811b3"
+  integrity sha512-6zgiCJyV63TOxpDKK+OxzhghMcBSn1Qhjb8p8TrfrUGAkzh7gQcmNN4ahq1CVbrN0ZpKhWET68WeifisYnQWyg==
 
 react-native-gesture-handler@^1.5.0:
   version "1.5.0"

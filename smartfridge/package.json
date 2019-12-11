@@ -8,12 +8,14 @@
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint .",
+    "postinstall": "node node_modules/realm/scripts/download-realm.js ios --sync",
     "clean": "watchman watch-del-all && rm -rf $TMPDIR/react-native-packager-cache-* && rm -rf $TMPDIR/metro-bundler-cache-* && rm -rf node_modules/ && npm cache clean --force && npm install &&"
   },
   "dependencies": {
     "react": "16.9.0",
-    "react-native": "0.61.4",
+    "react-native": "^0.61.5",
     "react-native-elements": "^1.2.7",
+    "react-native-floating-action": "^1.19.1",
     "react-native-gesture-handler": "^1.5.0",
     "react-native-iphone-x-helper": "^1.2.1",
     "react-native-reanimated": "^1.4.0",
