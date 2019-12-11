@@ -4,16 +4,12 @@ import {
   StyleSheet,
   View,
   Text,
-  StatusBar,
-  Button,
-  Platform,
   FlatList,
   TouchableOpacity,
   Dimensions,
   Image,
-  SectionList,
+  ScrollView,
 } from 'react-native';
-import NavigationService from '../navigation/NavigationService.js';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 
@@ -23,21 +19,10 @@ class RecipesDetailView extends Component {
     const {navigation} = this.props;
     this.state = {
       isLoading: true,
-      // foodId: this.props.id,
-      // foodName: this.props.name,
-      // foodImageUrl: this.props.image,
-      foodId: navigation.getParam('id'),
-      foodName: navigation.getParam('name'),
-      foodImageUrl: navigation.getParam('image'),
       dataSource: null,
-      informations: [
-        {
-          ingredients: [],
-        },
-        {
-          steps: [],
-        },
-      ],
+      foodId: navigation.getParam('id'),
+      foodImage: navigation.getParam('image'),
+      foodName: navigation.getParam('name'),
       ingredients: [],
       steps: [],
     };
@@ -49,6 +34,7 @@ class RecipesDetailView extends Component {
 
   async componentDidMount() {
     const foodId = this.state.foodId;
+    console.log('FOODNAME: ' + this.state.foodName);
 
     // fetch detail recipe from API by using the Id
     console.log('FOODID: ' + foodId);
@@ -61,141 +47,115 @@ class RecipesDetailView extends Component {
       },
     })
       .then(response => {
-        console.log(typeof response);
+        // console.log(typeof response);
         return response.json();
       })
       .then(responseJson => {
-        console.log('responseJSON: ', responseJson);
+        // console.log('responseJSON: ', responseJson);
         this.setState({
           isLoading: false,
           dataSource: responseJson,
         });
-        console.log(responseJson);
+        return responseJson;
       })
-      // .then(() => {
-      //   for (const data of this.state.dataSource.results) {
-      //     const recipeData = {
-      //       id: data.id,
-      //       name: data.name,
-      //       image: data.thumbnail_url,
-      //     };
-      //     var joined = this.state.recipeList.concat(recipeData);
-      //     this.setState({recipeList: joined});
-      //   }
-      // })
+      .then(responseJson => {
+        let tempIngredients = [];
+        let tempSteps = [];
+        for (const component of responseJson.sections[0].components) {
+          tempIngredients.push(component.ingredient.name);
+        }
+
+        for (const step of responseJson.instructions) {
+          tempSteps.push(step.display_text);
+        }
+
+        this.setState({
+          ingredients: tempIngredients,
+          steps: tempSteps,
+        });
+      })
+      .then(() => {
+        console.log('FOODNAME: ' + this.state.foodName);
+        console.log('INFO: ' + this.state.foodId);
+      })
       .catch(err => {
         console.log(err);
       });
   }
 
-  _fetchInformation = () => {};
-
   _keyExtractor = (item, index) => item.id;
 
-  renderItem = ({item}) => (
-    <View style={styles.item}>
-      <Image style={styles.ingredientImage} source={item.image} />
-      <Text style={styles.ingredientName}>{item.label}</Text>
+  _renderIngredients = ({item}) => (
+    <View style={{flex: 0.3}}>
+      <View style={styles.item}>
+        {/* <Image style={styles.ingredientImage} source={item.image} /> */}
+        {/* <Text style={styles.ingredientName}>{item.label}</Text> */}
+        <Text style={styles.ingredientName}>INGREIDNETN</Text>
+      </View>
     </View>
   );
 
-  // renderItem = ({item}) => (
-  //   <View style={styles.item}>
-  //     <Image style={styles.ingredientImage} source={item.image} />
-  //     <Text style={styles.ingredientName}>{item.label}</Text>
-  //   </View>
-  // );
-
-  data = [
-    {
-      id: 1,
-      image: require('../assets/ingredients/cabbage.png'),
-      label: 'Cabbage',
-      description: '2 days ago',
-    },
-    {
-      id: 2,
-      image: require('../assets/ingredients/bacon.png'),
-      label: 'Bacon',
-      description: '',
-    },
-
-    {
-      id: 4,
-      image: require('../assets/ingredients/eggs.png'),
-      label: 'Eggs',
-      description: 'Lidl',
-    },
-    {
-      id: 5,
-      image: require('../assets/ingredients/garlic.png'),
-      label: 'Garlic',
-      description: 'For brother',
-    },
-    {
-      id: 6,
-      image: require('../assets/ingredients/meat.png'),
-      label: 'Meat',
-      description: '',
-    },
-    {
-      id: 7,
-      image: require('../assets/ingredients/onion-1.png'),
-      label: 'Oninon',
-      description: '',
-    },
-  ];
-
-  recipesData = ['Make noodles', 'Make source', 'Complete'];
-
   render() {
-    const {navigation} = this.props;
-    const name = navigation.getParam('name');
-    const image = navigation.getParam('image');
-    const ingres = navigation.getParam('ingres');
-    // this.setState({
-    //   state.foodName = name
-    // });
+    const {foodName, foodImage, ingredients, steps} = this.state;
 
     return (
       <View style={styles.container}>
-        <View style={styles.imageContainer}>
-          <Image
-            style={styles.foodImage}
-            source={{uri: image, cache: 'force-cache'}}
-          />
-        </View>
-        {/* <SectionList
-          sections={this.state.informations}
-          style={styles.container}
-          renderItem={this._renderItem}
-          renderSectionHeader={this._renderSection}
-        /> */}
-        <View style={styles.foodNameContainer}>
-          <Text style={styles.foodName}>{name}</Text>
-        </View>
-        {/* <View style={styles.ingredientContainer}>
-          <FlatList
-            // columnWrapperStyle={{ alignItem: 'flex-start' }}
-            // style={{flex: 1}}
-            data={this.data}
-            renderItem={this.renderItem}
-            keyExtractor={this._keyExtractor}
-            numColumns={3}
-          />
-        </View>
-        <View style={styles.descriptionContainer}>
-          <FlatList
-            data={this.recipesData}
-            renderItem={this.renderItem}
-            keyExtractor={this._keyExtractor}
-            numColumns={1}
-          />
-        </View> */}
+        <ScrollView>
+          <View style={styles.imageContainer}>
+            <Image
+              style={styles.foodImage}
+              source={{uri: foodImage, cache: 'force-cache'}}
+            />
+          </View>
+          <View
+            style={[
+              styles.foodNameContainer,
+              // foodName.length > 20 ? {height: 90} : {height: 50},
+            ]}>
+            <Text style={styles.foodName}>{foodName}</Text>
+          </View>
+          <View style={{flex: 1}}>
+            <FlatList
+              // style={{flex: 1}}
+              data={ingredients}
+              renderItem={this._renderIngredients}
+              keyExtractor={(item, index) => index}
+              scrollEnabled={false}
+              numColumns={3}
+            />
+          </View>
+          <View>
+            <Text>SFSDFSDFSD</Text>
+            <Text>SFSDFSDFSD</Text>
+            <Text>SFSDFSDFSD</Text>
+            <Text>SFSDFSDFSD</Text>
+          </View>
+        </ScrollView>
       </View>
     );
   }
 }
+//render(){
+//      this.state.brandsToCompare.map(brand => <PickerModalContainer brand={brand}/>)
+// }
+const DATA = [
+  {
+    title: 'Main dishes',
+    data: ['Pizza', 'Burger', 'Risotto'],
+  },
+  {
+    title: 'Sides',
+    data: ['French Fries', 'Onion Rings', 'Fried Shrimps'],
+  },
+  {
+    title: 'Drinks',
+    data: ['Water', 'Coke', 'Beer'],
+  },
+  {
+    title: 'Desserts',
+    data: ['Cheese Cake', 'Ice Cream'],
+  },
+];
 
 const styles = StyleSheet.create({
   container: {
@@ -208,8 +168,10 @@ const styles = StyleSheet.create({
   },
   foodNameContainer: {
     // flex: 1,
-    height: 50,
+    // height: 50,
+    width: screenWidth,
     paddingLeft: 8,
+    // backgroundColor: 'red',
   },
   ingredientContainer: {
     // flex: 1,
@@ -244,6 +206,15 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  stepContainer: {
+    flex: 1,
+    alignContent: 'center',
+    justifyContent: 'center',
+  },
+  stepText: {
+    fontSize: 20,
+    fontWeight: '300',
   },
   foodImage: {
     // flexDirection: 'row',
