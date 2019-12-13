@@ -1,19 +1,18 @@
 import React, {Component} from 'react';
 import {
-  SafeAreaView,
   StyleSheet,
   View,
-  Text,
-  StatusBar,
   Button,
   Platform,
   FlatList,
+  Dimensions,
+  SafeAreaView,
   TouchableOpacity,
-  Image,
 } from 'react-native';
 import {SearchBar} from 'react-native-elements';
-import {material} from 'react-native-typography';
+import {material, human} from 'react-native-typography';
 import {FloatingAction} from 'react-native-floating-action';
+import Icon from 'react-native-vector-icons/Ionicons';
 import {
   updateIngredient,
   deleteIngredient,
@@ -23,6 +22,9 @@ import {
 import realm from '../models/IngredientSchemas';
 import NavigationService from '../navigation/NavigationService.js';
 import Ingredient from '../components/Ingredient';
+import AnimatedHeader from '../utils/AnimatedHeader';
+
+const screenWidth = Math.round(Dimensions.get('window').width);
 
 class MyFridgeView extends Component {
   constructor(props) {
@@ -40,20 +42,20 @@ class MyFridgeView extends Component {
   }
 
   /* navigation header */
-  static navigationOptions = () => ({
-    title: 'My Fridge',
-    // headerTintColor: 'blue',
-    headerRight: (
-      <Button
-        title="Add"
-        // color="#8bc7e9"
-        onPress={() => {
-          console.log('Right Button Tapped');
-          NavigationService.navigateForFridgeView('AddIngredient');
-        }}
-      />
-    ),
-  });
+  // static navigationOptions = () => ({
+  //   title: 'My Fridge',
+  //   // headerTintColor: 'blue',
+  //   headerRight: (
+  //     <Button
+  //       title="Config"
+  //       // color="#8bc7e9"
+  //       onPress={() => {
+  //         console.log('Right Button Tapped');
+  //         // NavigationService.navigateForFridgeView('AddIngredient');
+  //       }}
+  //     />
+  //   ),
+  // });
 
   _reloadData = () => {
     queryAllIngredients()
@@ -95,20 +97,107 @@ class MyFridgeView extends Component {
       image={require(`../assets/ingredients/tomato.png`)}
       desc={item.description}
       forMyFridgeView={true}
+      navigation={this.props.navigation}
     />
   );
 
+  /* Tap (+) button for adding ingredients */
+  _addIngredient = type => {
+    switch (type) {
+      case 'search':
+        // NavigationService.navigateForFridgeView('AddIngredient');
+        this.props.navigation.navigate('AddIngredient');
+        break;
+      case 'scan_receipt':
+        break;
+      case 'scan_barcode':
+        break;
+    }
+  };
+
   render() {
     const {search} = this.state;
+    const actions = [
+      {
+        text: 'Search',
+        // icon: require('../assets/ingredients/tomato.png'),
+        name: 'search',
+        position: 3,
+        color: '#79c8ec',
+      },
+      {
+        text: 'Scan Receipt ',
+        // icon: require('../assets/ingredients/tomato.png'),
+        name: 'scan_receipt',
+        position: 1,
+        color: '#79c8ec',
+      },
+      {
+        text: 'Scan Barcode',
+        // icon: require('../assets/ingredients/tomato.png'),
+        name: 'scan_barcode',
+        position: 2,
+        color: '#79c8ec',
+      },
+    ];
 
     return (
-      <View style={styles.container}>
-        <SearchBar
+      <SafeAreaView style={styles.container}>
+        <AnimatedHeader
+          style={styles.animatedHeader}
+          // backText="Back"
+          title="My Fridge"
+          // renderLeft={() => <Icon name="arrow-back" style={{marginLeft: 20}} />}
+          // renderRight={() => <Icon name="add" style={{marginRight: 20}} />}
+          renderRight={() => (
+            <TouchableOpacity
+              onPress={() => console.log('Setting button tapped')}
+              style={styles.setting}>
+              <Icon
+                name="md-settings"
+                size={40}
+                backgroundColor="transparent"
+                // iconStyle={{marginTop: 5}}
+                color="#5ccaf0"
+              />
+            </TouchableOpacity>
+          )}
+          // backStyle={{marginLeft: 10}}
+          // backTextStyle={{fontSize: 20, color: '#000'}}
+          titleStyle={styles.largeTitle}
+          headerMaxHeight={120}
+          // toolbarColor="#FFF"
+          // searchBar={true}
+          // parallax={true}
+          disabled={false}>
+          <FlatList
+            // style={{flex: 1}}
+            data={this.state.searchingIngredient}
+            renderItem={this._renderItem}
+            keyExtractor={this._keyExtractor}
+            numColumns={2}
+          />
+        </AnimatedHeader>
+        <FloatingAction
+          actions={actions}
+          color="#79c8ec"
+          shadow={{
+            shadowOpacity: 0.1,
+            shadowOffset: {width: 0, height: 5},
+            shadowColor: '#000000',
+            shadowRadius: 3,
+          }}
+          onPressItem={name => {
+            this._addIngredient(name);
+          }}
+        />
+        {/* <SearchBar
           style={{flex: 1}}
           platform={Platform.OS === 'ios' ? 'ios' : 'android'}
           inputContainerStyle={{backgroundColor: '#eaeaea'}}
           containerStyle={{backgroundColor: 'white'}}
           placeholder="Search for ingredients"
+          placeholderTextColor="#cacbcd"
           onChangeText={this._updateSearch}
           value={search}
         />
@@ -121,44 +210,39 @@ class MyFridgeView extends Component {
         />
         <FloatingAction
           actions={actions}
-          color="#8bc7e9"
-          overlayColor="transparent"
-          onPressItem={name => {
-            console.log(`selected button: ${name}`);
+          color="#79c8ec"
+          shadow={{
+            shadowOpacity: 0.1,
+            shadowOffset: {width: 0, height: 5},
+            shadowColor: '#000000',
+            shadowRadius: 3,
           }}
-        />
-        {/* TODO: Make Add Button */}
-      </View>
+          onPressItem={name => {
+            this._addIngredient(name);
+          }}
+        /> */}
+      </SafeAreaView>
     );
   }
 }
 
-const actions = [
-  {
-    text: 'Search',
-    // icon: require('../assets/ingredients/tomato.png'),
-    name: 'bt_accessibility',
-    position: 3,
-    color: '#8bc7e9',
-  },
-  {
-    text: 'Scan Receipt ',
-    // icon: require('../assets/ingredients/tomato.png'),
-    name: 'bt_language',
-    position: 1,
-    color: '#8bc7e9',
-  },
-  {
-    text: 'Scan Barcode',
-    // icon: require('../assets/ingredients/tomato.png'),
-    name: 'bt_room',
-    position: 2,
-    color: '#8bc7e9',
-  },
-];
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  animatedHeader: {
+    flex: 1,
+  },
+  setting: {
+    right: 20,
+  },
+  largeTitle: {
+    ...human.largeTitleObject,
+    fontSize: 35,
+    fontWeight: '600',
+    left: 20,
+    bottom: 20,
+    color: '#000',
   },
 });
 

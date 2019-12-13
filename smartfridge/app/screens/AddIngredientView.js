@@ -4,35 +4,45 @@ import {
   StyleSheet,
   View,
   Text,
-  StatusBar,
   Button,
   Platform,
-  FlatList,
-  TouchableOpacity,
-  Image,
-  TextInput,
-  Alert,
 } from 'react-native';
 import {SearchBar} from 'react-native-elements';
-import {
-  updateIngredient,
-  deleteIngredient,
-  queryAllIngredients,
-  insertNewIngredient,
-} from '../models/IngredientSchemas';
-import realm from '../models/IngredientSchemas';
-import NavigationService from '../navigation/NavigationService.js';
+import {human} from 'react-native-typography';
+import {insertNewIngredient} from '../models/IngredientSchemas';
 
 class AddIngredientView extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      ingredients: [],
       name: '',
       description: '',
+      search: '',
     };
   }
 
-  addIngredientToModel = () => {
+  componentDidMount() {
+    const url = `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${this.state.query}&json=1`;
+    fetch(url)
+      .then(response => {
+        return response.json();
+      })
+      .then(responseJson => {
+        const {products: ingredients} = responseJson;
+        this.setState({ingredients});
+        console.log(ingredients.length);
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }
+
+  _updateSearch = search => {
+    this.setState({search});
+  };
+
+  _addIngredientToModel = () => {
     const newIngredient = {
       id: Math.floor(Date.now() / 1000),
       name: this.state.name,
@@ -41,36 +51,50 @@ class AddIngredientView extends Component {
     };
     insertNewIngredient(newIngredient)
       .then()
-      .catch(error => Alert.alert(`Error occurs: ${error}`));
+      .catch(error => console.log(`Error occurs: ${error}`));
   };
 
   render() {
+    const {search} = this.state;
     return (
-      <View style={styles.container}>
-        <Text> Add ingdredient </Text>
-
-        <TextInput
-          style={styles.textInput}
-          placeholder="name"
-          onChangeText={text => this.setState({name: text})}
-          //   value={value}
-        />
-        <TextInput
-          style={styles.textInput}
-          placeholder="description"
-          onChangeText={text => this.setState({description: text})}
-          //   value={value}
-        />
-        <Button
-          title="Add"
-          onPress={() => {
-            console.log(this.state.name, this.state.description);
-            this.addIngredientToModel();
-            this.props.navigation.goBack();
+      <SafeAreaView style={styles.container}>
+        <View style={styles.header}>
+          <Button
+            style={styles.button}
+            title="Cancel"
+            onPress={() => {
+              this.props.navigation.goBack();
+            }}
+          />
+          <Button
+            style={styles.button}
+            title="Add "
+            onPress={() => {
+              this._addIngredientToModel();
+              this.props.navigation.goBack();
+            }}
+          />
+        </View>
+        <Text style={styles.title}>Add Ingredients</Text>
+        <SearchBar
+          platform={Platform.OS === 'ios' ? 'ios' : 'android'}
+          // showCancel={true}
+          cancelButtonTitle=""
+          cancelButtonProps={{
+            disabled: true,
+            buttonStyle: {
+              width: 7,
+              buttonDisabledTextStyle: 'transparent',
+            },
           }}
+          inputContainerStyle={{backgroundColor: '#eaeaea'}}
+          containerStyle={{backgroundColor: 'white'}}
+          placeholder="Search for ingredients"
+          placeholderTextColor="#cacbcd"
+          onChangeText={this._updateSearch}
+          value={search}
         />
-        <Button title="Cancel" onPress={() => this.props.navigation.goBack()} />
-      </View>
+      </SafeAreaView>
     );
   }
 }
@@ -78,13 +102,21 @@ class AddIngredientView extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginHorizontal: 10,
   },
-  textInput: {
-    paddingLeft: 50,
-    paddingRight: 50,
+  button: {},
+  header: {
     height: 50,
-    borderBottomWidth: 0.5,
-    borderColor: 'gray',
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+    marginHorizontal: 5,
+  },
+  title: {
+    ...human.titleObject,
+    fontSize: 45,
+    fontWeight: '600',
+    marginHorizontal: 10,
   },
 });
 

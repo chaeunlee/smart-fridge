@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Image,
 } from 'react-native';
-import {material} from 'react-native-typography';
+import {human, material} from 'react-native-typography';
 import {deleteIngredient} from '../models/IngredientSchemas';
 import NavigationService from '../navigation/NavigationService.js';
 
@@ -17,14 +17,19 @@ class Ingredient extends React.PureComponent {
   }
 
   pressIngredient = () => {
-    // this.props.navigation.navigate('IngredientDetailView');
-    // NavigationService.navigate('IngredientDetailView');
-    NavigationService.navigateForFridgeView('DetailIngredient', {
+    this.props.navigation.navigate('DetailIngredient', {
       id: this.props.id,
       name: this.props.name,
       image: this.props.image,
       desc: this.props.desc,
     });
+    // NavigationService.navigate('IngredientDetailView');
+    // NavigationService.navigateForFridgeView('DetailIngredient', {
+    //   id: this.props.id,
+    //   name: this.props.name,
+    //   image: this.props.image,
+    //   desc: this.props.desc,
+    // });
   };
 
   render() {
@@ -36,7 +41,7 @@ class Ingredient extends React.PureComponent {
           <TouchableOpacity onPress={this.pressIngredient} style={styles.item}>
             <Image style={styles.ingredientImage} source={image} />
             <View style={styles.ingredientTextView}>
-              <Text style={material.headline}>{name}</Text>
+              <Text style={styles.ingredientName}>{name}</Text>
               <Text style={styles.ingredientDesc}>{desc}</Text>
             </View>
           </TouchableOpacity>
@@ -81,12 +86,19 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
   },
+  ingredientName: {
+    ...human.title2Object,
+    fontSize: 20,
+    fontWeight: '500',
+  },
   ingredientImage: {
     width: 45,
     height: 45,
   },
   ingredientDesc: {
-    fontSize: 13,
+    ...human.body,
+    fontSize: 18,
+    fontWeight: '400',
     color: 'gray',
   },
   ingredientTextView: {

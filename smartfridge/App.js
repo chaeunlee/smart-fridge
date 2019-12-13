@@ -6,7 +6,7 @@
  * @flow
  */
 
-import React, {Component} from 'react';
+import React, {Component, lazy} from 'react';
 // import {
 //   SafeAreaView,
 //   StyleSheet,

@@ -21,21 +21,21 @@ const RootStack = createStackNavigator(
   },
   {
     initialRouteName: 'Home',
+    // headerMode: 'none',
   },
 );
 
 const AppContainer = createAppContainer(RootStack);
+export default AppContainer;
 
-// export default AppContainer;
-
-export default class App extends Component {
-  render() {
-    return (
-      <AppContainer
-        ref={navigatorRef => {
-          NavigationService.setTopLevelNavigatorForRecipesView(navigatorRef);
-        }}
-      />
-    );
-  }
-}
+// export default class App extends Component {
+//   render() {
+//     return (
+//       <AppContainer
+//         ref={navigatorRef => {
+//           NavigationService.setTopLevelNavigatorForRecipesView(navigatorRef);
+//         }}
+//       />
+//     );
+//   }
+// }

@@ -11,7 +11,7 @@ export const BookmarkSchema = {
   properties: {
     id: 'int',
     name: 'string',
-    thumbnail: 'data?',
+    image: 'string',
     creationDate: 'date',
   },
 };
@@ -37,7 +37,7 @@ const databaseOptions = {
       newObjects[i].id = oldObjects[i].id;
       newObjects[i].name = oldObjects[i].name;
       newObjects[i].creationDate = oldObjects[i].creationDate;
-      newObjects[i].thumbnail = null;
+      newObjects[i].image = null;
     }
   },
 };

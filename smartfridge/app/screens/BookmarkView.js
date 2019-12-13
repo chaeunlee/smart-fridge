@@ -20,6 +20,8 @@ import {
 } from '../models/BookmarkSchemas';
 import realm from '../models/BookmarkSchemas';
 import NavigationService from '../navigation/NavigationService.js';
+import Recipe from '../components/Recipe';
+import AnimatedHeader from '../utils/AnimatedHeader';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 
@@ -52,7 +54,7 @@ class BookmarkView extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      BookmarkList: [],
+      bookmarkList: [],
     };
     this._reloadData();
     realm.addListener('change', () => {
@@ -61,21 +63,24 @@ class BookmarkView extends Component {
     });
   }
 
+  static navigationOptions = {
+    title: 'Bookmark',
+  };
+
+  componentDidMount() {
+    deleteAllBookmarks().then(console.log('All bookmarks deleted'));
+  }
+
   _reloadData = () => {
     queryAllBookmarks()
       .then(bookmarkList => {
         this.setState({bookmarkList});
-        this.setState({searchingIngredient: bookmarkList});
       })
       .catch(error => {
         this.setState({bookmarkList: []});
         console.log(`Error occurs during reload data: ${error}`);
       });
     console.log('Data reloaded - Bookmark View');
-  };
-
-  static navigationOptions = {
-    title: 'Bookmark',
   };
 
   data = [
@@ -107,41 +112,57 @@ class BookmarkView extends Component {
 
   _keyExtractor = (item, index) => item.id;
 
-  renderItem = ({item}) => (
-    <BookmarkedRecipe
+  _renderItem = ({item}) => (
+    <Recipe
       id={item.id}
-      name={item.label}
+      name={item.name}
       image={item.image}
-      ingres={item.ingredients}
+      forBookmark={true}
     />
   );
 
   render() {
-    return (
-      <View style={{flex: 1}}>
-        <FlatList
-          // columnWrapperStyle={{ alignItem: 'flex-start' }}
-          style={{flex: 1}}
-          data={this.data}
-          renderItem={this.renderItem}
-          keyExtractor={this._keyExtractor}
-          numColumns={2}
-        />
-      </View>
-    );
+    const bookmarkList = this.state.bookmarkList;
+    console.log(bookmarkList);
+    if (bookmarkList.length) {
+      return (
+        <SafeAreaView style={styles.container}>
+          <FlatList
+            // columnWrapperStyle={{ alignItem: 'flex-start' }}
+            style={{flex: 1}}
+            data={bookmarkList}
+            renderItem={this._renderItem}
+            keyExtractor={this._keyExtractor}
+            numColumns={2}
+          />
+        </SafeAreaView>
+      );
+    } else {
+      return (
+        <SafeAreaView style={styles.containerForEmpty}>
+          <Text style={styles.textForEmpty}>You don't have bookmark yet</Text>
+        </SafeAreaView>
+      );
+    }
   }
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
+    marginHorizontal: 5,
   },
-  //   list: {
-  //     height: 100,
-  //   },
-  ingredientContainer: {},
-
+  containerForEmpty: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  textForEmpty: {
+    // ...human.title1Object,
+    fontSize: 40,
+    color: 'rgba(200, 200, 200, 0.3)',
+    fontWeight: '700',
+  },
   item: {
     flex: 1,
     // flexDirection: 'row',

@@ -7,9 +7,18 @@ import {
   TouchableHighlight,
   Image,
   Dimensions,
+  Alert,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import NavigationService from '../navigation/NavigationService.js';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import {human} from 'react-native-typography';
+import {
+  deleteBookmark,
+  deleteAllBookmarks,
+  insertNewBookmark,
+  queryAllBookmarks,
+} from '../models/BookmarkSchemas';
+import realm from '../models/BookmarkSchemas';
+// import NavigationService from '../navigation/NavigationService.js';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 
@@ -22,57 +31,110 @@ class Recipe extends React.PureComponent {
   }
 
   pressIngredient = () => {
-    NavigationService.navigateForRecipesView('DetailRecipes', {
+    this.props.navigation.navigate('DetailRecipes', {
       id: this.props.id,
       name: this.props.name,
       image: this.props.image,
     });
+    // NavigationService.navigateForRecipesView('DetailRecipes', {
+    //   id: this.props.id,
+    //   name: this.props.name,
+    //   image: this.props.image,
+    // });
   };
 
-  tabBookmark = id => {
-    this.setState({isBookmarked: !this.state.isBookmarked});
-    console.log(`id: ${id}`);
+  tabBookmark = isBookmarkView => {
+    const isBookmarked = this.state.isBookmarked;
+
+    if (isBookmarked || isBookmarkView) {
+      deleteBookmark(this.props.id)
+        .then(console.log(`Deleted ${this.props.id}`))
+        .catch(error =>
+          console.log(`Error occurs during deleting bookmark\n${error}`),
+        );
+    } else {
+      const newBookmark = {
+        id: this.props.id,
+        name: this.props.name,
+        image: this.props.image,
+        creationDate: new Date(),
+      };
+      insertNewBookmark(newBookmark)
+        .then(console.log(newBookmark))
+        .catch(error =>
+          console.log(`Error occurs during save bookmark\n${error}`),
+        );
+    }
+    this.setState({isBookmarked: !isBookmarked});
   };
 
   render() {
-    return (
-      <TouchableHighlight
-        onPress={this.pressIngredient}
-        style={[
-          styles.itemContainer,
-          this.props.name.length > 30 ? {height: 280} : {height: 250},
-        ]}
-        activeOpacity={1}
-        underlayColor="lightgray">
-        <View style={styles.item}>
-          <View>
+    const {name, image, forBookmark} = this.props;
+
+    /* For Bookmark View */
+    if (forBookmark) {
+      return (
+        <View style={stylesForBookmark.container}>
+          <View style={stylesForBookmark.imageContainer}>
             <Image
-              style={styles.foodImage}
-              source={{uri: this.props.image, cache: 'force-cache'}}
+              source={{uri: image, cache: 'force-cache'}}
+              style={stylesForBookmark.image}
             />
-            <View style={styles.labelContainer}>
-              <View style={styles.foodNameContainer}>
-                <Text style={styles.foodName}>{this.props.name}</Text>
-              </View>
-              <View style={styles.bookmarkContainer}>
-                <TouchableOpacity
-                  onPress={() => this.tabBookmark(this.props.id)}>
-                  <Icon
-                    name={
-                      this.state.isBookmarked ? 'bookmark' : 'bookmark-border'
-                    }
-                    size={40}
-                    backgroundColor="transparent"
-                    iconStyle={{marginTop: 5}}
-                    color="#5ccaf0"
-                  />
-                </TouchableOpacity>
+          </View>
+          <View style={stylesForBookmark.labelContainer}>
+            <Text style={stylesForBookmark.name}>
+              {name.length > 11 ? name.substring(0, 9) + '...' : name}
+            </Text>
+            <TouchableOpacity onPress={() => this.tabBookmark(true)}>
+              <Icon
+                name="bookmark"
+                size={30}
+                backgroundColor="transparent"
+                // iconStyle={{marginTop: 5}}
+                color="#5ccaf0"
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+      );
+    } else {
+      /* For Recipe View */
+      return (
+        <TouchableHighlight
+          onPress={this.pressIngredient}
+          style={[
+            styles.itemContainer,
+            name.length > 30 ? {height: 280} : {height: 250},
+          ]}
+          activeOpacity={1}
+          underlayColor="lightgray">
+          <View style={styles.item}>
+            <View>
+              <Image
+                style={styles.foodImage}
+                source={{uri: image, cache: 'force-cache'}}
+              />
+              <View style={styles.labelContainer}>
+                <View style={styles.foodNameContainer}>
+                  <Text style={styles.foodName}>{name}</Text>
+                </View>
+                <View style={styles.bookmarkContainer}>
+                  <TouchableOpacity onPress={() => this.tabBookmark()}>
+                    <Icon
+                      name={this.state.isBookmarked ? 'bookmark' : 'bookmark-o'}
+                      size={35}
+                      backgroundColor="transparent"
+                      // iconStyle={{marginTop: 5}}
+                      color="#5ccaf0"
+                    />
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
           </View>
-        </View>
-      </TouchableHighlight>
-    );
+        </TouchableHighlight>
+      );
+    }
   }
 }
 
@@ -112,4 +174,39 @@ const styles = StyleSheet.create({
   },
 });
 
+const stylesForBookmark = StyleSheet.create({
+  container: {
+    flex: 0.5,
+    // backgroundColor: 'red',
+    height: 160,
+    margin: 5,
+  },
+  imageContainer: {
+    // flex: 1,
+    borderRadius: 15,
+    height: 120,
+    backgroundColor: 'blue',
+    overflow: 'hidden',
+  },
+  image: {
+    flex: 1,
+    aspectRatio: 2,
+    // height: '100%',
+    // width: '100%',
+    borderRadius: 15,
+    resizeMode: 'center',
+  },
+  labelContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 3,
+    marginHorizontal: 7,
+    justifyContent: 'space-between',
+  },
+  name: {
+    ...human.titleObject,
+    fontSize: 24,
+    fontWeight: '400',
+  },
+});
 export default Recipe;

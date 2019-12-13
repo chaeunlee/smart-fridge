@@ -27,6 +27,12 @@ const screenWidth = Math.round(Dimensions.get('window').width);
 class RecipesView extends Component {
   constructor(props) {
     super(props);
+    this.navigationWillFocusListener = props.navigation.addListener(
+      'willFocus',
+      () => {
+        console.log('TAPPED');
+      },
+    );
     this.state = {
       isLoading: true,
       ingredientList: [],
@@ -187,6 +193,7 @@ class RecipesView extends Component {
       name={item.name}
       image={item.image}
       ingres={item.ingredients}
+      navigation={this.props.navigation}
     />
   );
 
@@ -208,6 +215,7 @@ class RecipesView extends Component {
             inputContainerStyle={{backgroundColor: '#eaeaea'}}
             containerStyle={{backgroundColor: 'white'}}
             placeholder="Search for ingredients"
+            placeholderTextColor="#cacbcd"
             onChangeText={this.updateSearch}
             value={search}
           />

@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
   index: {
     fontSize: 45,
     fontWeight: '300',
-    color: '#8bc7e9',
+    color: '#79c8ec',
     marginLeft: 5,
   },
 });
