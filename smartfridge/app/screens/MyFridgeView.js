@@ -8,6 +8,7 @@ import {
   Dimensions,
   SafeAreaView,
   TouchableOpacity,
+  Text,
 } from 'react-native';
 import {SearchBar} from 'react-native-elements';
 import {material, human} from 'react-native-typography';
@@ -20,7 +21,7 @@ import {
   insertNewIngredient,
 } from '../models/IngredientSchemas';
 import realm from '../models/IngredientSchemas';
-import NavigationService from '../navigation/NavigationService.js';
+// import NavigationService from '../navigation/NavigationService.js';
 import Ingredient from '../components/Ingredient';
 import AnimatedHeader from '../utils/AnimatedHeader';
 
@@ -56,6 +57,12 @@ class MyFridgeView extends Component {
   //     />
   //   ),
   // });
+
+  /*
+  아싸리 클래스를 하나 만들어서
+  플랫 리스트와 서치바 동시에 포함하는 것을 이용하자
+  그래서 그것을 child로 두면 나을듯
+   */
 
   _reloadData = () => {
     queryAllIngredients()
@@ -94,7 +101,7 @@ class MyFridgeView extends Component {
       id={item.id}
       name={item.name}
       // image={item.image}
-      image={require(`../assets/ingredients/tomato.png`)}
+      image={require('../assets/ingredients/tomato.png')}
       desc={item.description}
       forMyFridgeView={true}
       navigation={this.props.navigation}
@@ -145,10 +152,7 @@ class MyFridgeView extends Component {
       <SafeAreaView style={styles.container}>
         <AnimatedHeader
           style={styles.animatedHeader}
-          // backText="Back"
           title="My Fridge"
-          // renderLeft={() => <Icon name="arrow-back" style={{marginLeft: 20}} />}
-          // renderRight={() => <Icon name="add" style={{marginRight: 20}} />}
           renderRight={() => (
             <TouchableOpacity
               onPress={() => console.log('Setting button tapped')}
@@ -157,19 +161,17 @@ class MyFridgeView extends Component {
                 name="md-settings"
                 size={40}
                 backgroundColor="transparent"
-                // iconStyle={{marginTop: 5}}
                 color="#5ccaf0"
               />
             </TouchableOpacity>
           )}
-          // backStyle={{marginLeft: 10}}
-          // backTextStyle={{fontSize: 20, color: '#000'}}
           titleStyle={styles.largeTitle}
+          backTextStyle={styles.smallTitle}
           headerMaxHeight={120}
-          // toolbarColor="#FFF"
-          // searchBar={true}
-          // parallax={true}
           disabled={false}>
+          <View>
+            <Text>dsfsdf</Text>
+          </View>
           <FlatList
             // style={{flex: 1}}
             data={this.state.searchingIngredient}
@@ -235,14 +237,19 @@ const styles = StyleSheet.create({
   },
   setting: {
     right: 20,
+    bottom: 10,
   },
   largeTitle: {
     ...human.largeTitleObject,
     fontSize: 35,
     fontWeight: '600',
-    left: 20,
+    // left: 20,
     bottom: 20,
     color: '#000',
+  },
+  smallTitle: {
+    fontSize: 20,
+    bottom: 20,
   },
 });
 

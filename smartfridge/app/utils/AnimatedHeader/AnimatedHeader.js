@@ -32,19 +32,28 @@ export default class AnimatedHeader extends React.PureComponent<Props> {
         'AnimatedHeader must have ScrollView or FlatList as a child',
       );
     }
-    if (arr.length > 1) {
+    if (arr.length > 2) {
       console.error('Invalid child, only 1 child accepted');
     }
-    const {headerMaxHeight} = this.props;
-    const child = React.cloneElement(arr[0], {
+    const {headerMaxHeight, searchbarMaxHeight} = this.props;
+    const supplemantary = React.cloneElement(arr[0], {
+      style: {backgroundColor: 'red', height: headerMaxHeight + 100},
+      // ref: r => (this.scrollView = r),
+      // scrollEventThrottle: 16,
+      onScroll: this._onScroll,
+      // contentContainerStyle: {paddingTop: headerMaxHeight + 30 || 200},
+    });
+    const child = React.cloneElement(arr[1], {
       style: {flex: 1},
       ref: r => (this.scrollView = r),
       scrollEventThrottle: 16,
       onScroll: this._onScroll,
       contentContainerStyle: {paddingTop: headerMaxHeight + 30 || 200},
+      // contentContainerStyle: {paddingTop: 10},
     });
     return (
       <View style={this.props.style}>
+        {/* {supplemantary} */}
         {child}
         <Header
           {...this.props}

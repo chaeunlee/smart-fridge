@@ -24,14 +24,14 @@ const topInset = isIphoneX ? iphoneXTopInset : 0;
 const toolbarHeight = initToolbarHeight + topInset + paddingTop;
 // const AnimatedSearchbar = Animated.createAnimatedComponent(SearchBar);
 
-export default class Header extends React.PureComponent {
+class Header extends React.PureComponent {
   constructor(props) {
     super(props);
     this.headerHeight = props.headerMaxHeight + 30;
     this.state = {
       scrollOffset: new Animated.Value(0),
-      left: 0,
-      bottom: 0,
+      left: 25,
+      bottom: 10,
     };
   }
 
@@ -41,7 +41,8 @@ export default class Header extends React.PureComponent {
     }
     this.state.scrollOffset.setValue(e.nativeEvent.contentOffset.y);
     // console.log(e.nativeEvent.contentOffset.y);
-    // console.log(this.state.scrollOffset);
+    console.log('scrolloffset: ', this.state.scrollOffset);
+    // console.log('left: ', this.state.left);
   };
 
   onBackLayout = e => {
@@ -53,13 +54,14 @@ export default class Header extends React.PureComponent {
 
   _getFontSize = () => {
     const {scrollOffset} = this.state;
+    const folded = this.headerHeight - toolbarHeight;
     const backFontSize =
       this.props.backTextStyle.fontSize ||
       Header.defaultProps.backTextStyle.fontSize;
     const titleFontSize =
       this.props.titleStyle.fontSize || Header.defaultProps.titleStyle.fontSize;
     return scrollOffset.interpolate({
-      inputRange: [0, this.headerHeight - toolbarHeight],
+      inputRange: [0, folded],
       outputRange: [titleFontSize, backFontSize],
       extrapolate: 'clamp',
     });
@@ -69,8 +71,9 @@ export default class Header extends React.PureComponent {
     const {scrollOffset} = this.state;
     const left =
       this.props.titleStyle.left || Header.defaultProps.titleStyle.left;
+    const folded = this.headerHeight - toolbarHeight;
     return scrollOffset.interpolate({
-      inputRange: [0, this.headerHeight - toolbarHeight],
+      inputRange: [0, folded],
       outputRange: [left, this.state.left],
       extrapolate: 'clamp',
     });
@@ -78,8 +81,9 @@ export default class Header extends React.PureComponent {
 
   _getHeight = () => {
     const {scrollOffset} = this.state;
+    const folded = this.headerHeight - toolbarHeight;
     return scrollOffset.interpolate({
-      inputRange: [0, this.headerHeight - toolbarHeight],
+      inputRange: [0, folded],
       outputRange: [this.headerHeight, toolbarHeight],
       extrapolate: 'clamp',
     });
@@ -87,60 +91,49 @@ export default class Header extends React.PureComponent {
 
   _getBottom = () => {
     const {scrollOffset} = this.state;
+    const folded = this.headerHeight - toolbarHeight;
     const bottom =
       this.props.titleStyle.bottom || Header.defaultProps.titleStyle.bottom;
     return scrollOffset.interpolate({
-      inputRange: [0, this.headerHeight - toolbarHeight],
+      inputRange: [0, folded],
       outputRange: [bottom, this.state.bottom],
       extrapolate: 'clamp',
     });
   };
 
-  // _getSearchbarBottom = () => {
-  //   const {scrollOffset} = this.state;
-  //   const bottom =
-  //     this.props.titleStyle.bottom || Header.defaultProps.titleStyle.bottom;
-  //   return scrollOffset.interpolate({
-  //     inputRange: [0, this.headerHeight - toolbarHeight],
-  //     outputRange: [bottom, this.state.bottom],
-  //     extrapolate: 'clamp',
-  //   });
-  // };
-
   _getOpacity = () => {
     const {scrollOffset} = this.state;
-    // console.log(t)
+    const folded = this.headerHeight - toolbarHeight;
     return this.props.backText
       ? scrollOffset.interpolate({
-          inputRange: [0, this.headerHeight - toolbarHeight],
+          inputRange: [0, folded],
           outputRange: [1, 0],
           extrapolate: 'clamp',
         })
       : 0;
+  };
+
+  _getRightOpacity = () => {
+    const {scrollOffset} = this.state;
+    const folded = this.headerHeight - toolbarHeight;
+    return scrollOffset.interpolate({
+      inputRange: [0, folded - 5, folded],
+      outputRange: [1, 1, 0],
+      extrapolate: 'clamp',
+    });
   };
 
   _getImageOpacity = () => {
     const {scrollOffset} = this.state;
+    const folded = this.headerHeight - toolbarHeight;
     return this.props.imageSource
       ? scrollOffset.interpolate({
-          inputRange: [0, this.headerHeight - toolbarHeight],
+          inputRange: [0, folded],
           outputRange: [1, 0],
           extrapolate: 'clamp',
         })
       : 0;
   };
-
-  // _getSearchBarOpacity = () => {
-  //   const {scrollOffset} = this.state;
-  //   // return this.props.searchBar ? 1 : 0;
-  //   return this.props.searchBar
-  //     ? scrollOffset.interpolate({
-  //         inputRange: [0, this.headerHeight - toolbarHeight],
-  //         outputRange: [1, 0],
-  //         extrapolate: 'clamp',
-  //       })
-  //     : 0;
-  // };
 
   _getImageScaleStyle = () => {
     if (!this.props.parallax) {
@@ -176,12 +169,13 @@ export default class Header extends React.PureComponent {
     const bottom = this._getBottom();
     // const bottomForSearchbar = this._getSearchbarBottom();
     const opacity = this._getOpacity();
+    const opacityForButton = this._getRightOpacity();
     const fontSize = this._getFontSize();
     const imageOpacity = this._getImageOpacity();
     // const opacityForSearchBar = this._getSearchBarOpacity();
     const headerStyle = this.props.noBorder
       ? undefined
-      : {borderBottomWidth: 1, borderColor: '#a7a6ab'};
+      : {borderBottomWidth: 0.5, borderColor: '#a7a6ab'};
 
     return (
       <Animated.View
@@ -213,7 +207,8 @@ export default class Header extends React.PureComponent {
               onPress={onBackPress}
               activeOpacity={0.8}
               style={[styles.titleButton, backStyle]}
-              onLayout={this.onBackLayout}>
+              // onLayout={this.onBackLayout}
+            >
               <Animated.Text
                 style={[
                   backTextStyle,
@@ -223,25 +218,11 @@ export default class Header extends React.PureComponent {
               </Animated.Text>
             </TouchableOpacity>
             <View style={styles.flexView} />
-            {this.props.renderRight && this.props.renderRight()}
+            <Animated.View style={{opacity: opacityForButton}}>
+              {this.props.renderRight && this.props.renderRight()}
+            </Animated.View>
           </View>
         </View>
-
-        {/* <AnimatedSearchbar
-            style={{flex: 1}}
-            platform={Platform.OS === 'ios' ? 'ios' : 'android'}
-            inputContainerStyle={{backgroundColor: '#eaeaea'}}
-            containerStyle={{
-              backgroundColor: 'white',
-              // bottom: bottomForSearchbar,
-            }}
-            placeholder="Search for ingredients"
-            placeholderTextColor="#cacbcd"
-            onChangeText={this._updateSearch}
-            // scrollOffset={scrollOffset}
-            opacity={opacity}
-            // value={search}
-          />*/}
         <Animated.Text
           style={[
             titleStyle,
@@ -254,19 +235,6 @@ export default class Header extends React.PureComponent {
           ]}>
           {this.props.title}
         </Animated.Text>
-
-        {/* <Animated.View
-          style={[
-            styles.searchBarArea,
-            {backgroundColor: 'red'},
-            // headerStyle,
-            // {
-            //   height: height,
-            //   backgroundColor: 'red',
-            // },
-          ]}>
-          <Text>sdfdsfsd</Text>
-        </Animated.View> */}
       </Animated.View>
     );
   }
@@ -312,10 +280,12 @@ Header.defaultProps = {
   renderRight: undefined,
   backStyle: {marginLeft: 10},
   backTextStyle: {fontSize: 16},
-  titleStyle: {fontSize: 20, left: 40, bottom: 30},
+  titleStyle: {fontSize: 20, left: 20, bottom: 30},
   toolbarColor: '#FFF',
   headerMaxHeight: 200,
   disabled: false,
   imageSource: undefined,
   searchBar: undefined,
 };
+
+export default Header;

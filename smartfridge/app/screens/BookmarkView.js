@@ -140,7 +140,9 @@ class BookmarkView extends Component {
     } else {
       return (
         <SafeAreaView style={styles.containerForEmpty}>
-          <Text style={styles.textForEmpty}>You don't have bookmark yet</Text>
+          <Text style={styles.textForEmpty}>
+            You don't have any bookmark yet
+          </Text>
         </SafeAreaView>
       );
     }
