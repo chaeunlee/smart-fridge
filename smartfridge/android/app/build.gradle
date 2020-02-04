@@ -162,6 +162,20 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
+
+    /**********************************************************************************************/
+    // For Blur Module
+     // make sure to use 23.0.3 or greater
+    buildToolsVersion '23.0.3'
+
+    // ...
+    defaultConfig {
+        // Add these lines below the existing config
+        renderscriptTargetApi 23
+        renderscriptSupportModeEnabled true
+    }
+    /**********************************************************************************************/
+
     // applicationVariants are e.g. debug, release
     applicationVariants.all { variant ->
         variant.outputs.each { output ->

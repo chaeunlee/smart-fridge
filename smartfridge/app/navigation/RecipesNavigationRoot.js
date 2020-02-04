@@ -14,6 +14,21 @@ import NavigationService from './NavigationService';
 import {createStackNavigator} from 'react-navigation-stack';
 import {createAppContainer} from 'react-navigation';
 
+// const RootStack = createStackNavigator(
+//   {
+//     Home: {
+//       screen: RecipesView,
+//       headerMode: 'none',
+//     },
+//     DetailRecipes: {
+//       screen: RecipesDetailView,
+//     },
+//   },
+//   {
+//     initialRouteName: 'Home',
+//   },
+// );
+
 const RootStack = createStackNavigator(
   {
     Home: RecipesView,
@@ -21,7 +36,7 @@ const RootStack = createStackNavigator(
   },
   {
     initialRouteName: 'Home',
-    // headerMode: 'none',
+    headerMode: 'none',
   },
 );
 

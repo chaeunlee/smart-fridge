@@ -7,9 +7,16 @@ import {
   Dimensions,
   Image,
   ScrollView,
+  SafeAreaView,
+  TouchableOpacity,
 } from 'react-native';
+import {material, human} from 'react-native-typography';
+import Icon from 'react-native-vector-icons/Ionicons';
+import Icon2 from 'react-native-vector-icons/FontAwesome';
+
 import Ingredient from '../components/Ingredient';
 import Step from '../components/Step';
+import AnimatedHeader from '../utils/AnimatedHeader';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 
@@ -47,6 +54,11 @@ class RecipesDetailView extends Component {
       'Remove the large, tough outer leaves from cauliflower, and reserve any smaller, tender leaves. Cut cauliflower into medium florets.',
     );
     tempStepsList.push('Enjoy!');
+    tempIngreList.push('Onion');
+    tempIngreList.push('Onion');
+    tempIngreList.push('Onion');
+    tempIngreList.push('Onion');
+    tempIngreList.push('Onion');
     tempIngreList.push('Onion');
     tempIngreList.push('Onion');
     tempIngreList.push('Onion');
@@ -127,37 +139,76 @@ class RecipesDetailView extends Component {
 
   render() {
     const {foodName, foodImage, ingredients, steps} = this.state;
+    // const blu
 
     return (
+      // <SafeAreaView style={styles.container}>
       <View style={styles.container}>
-        <ScrollView>
-          <View style={styles.imageContainer}>
-            <Image
-              style={styles.foodImage}
-              source={{uri: foodImage, cache: 'force-cache'}}
-            />
-          </View>
-          <View>
-            <View style={styles.bodyContainer}>
-              <Text style={styles.foodName}>{foodName}</Text>
-              <View style={styles.ingredientContainer}>
-                <FlatList
-                  data={ingredients}
-                  renderItem={this._renderIngredients}
-                  keyExtractor={(item, index) => index}
-                  scrollEnabled={false}
-                  numColumns={3}
-                />
-              </View>
-              <View style={styles.stepListContainer}>
-                {steps.map((step, index) => {
-                  return <Step step={step} index={index} />;
-                })}
+        <AnimatedHeader
+          style={styles.animatedHeader}
+          title={foodName}
+          titleStyle={styles.largeTitle}
+          backTextStyle={styles.smallTitle}
+          headerMaxHeight={270}
+          imageSource={{uri: foodImage, cache: 'force-cache'}}
+          disabled={false}
+          noBorder={true}
+          tempSpace={50}
+          renderLeft={() => (
+            <TouchableOpacity
+              onPress={() => this.props.navigation.goBack()}
+              style={[styles.backButton, styles.shadow]}>
+              <Icon
+                name="ios-arrow-back"
+                size={40}
+                backgroundColor="transparent"
+                color="white"
+              />
+            </TouchableOpacity>
+          )}
+          renderRight={() => (
+            <TouchableOpacity
+              onPress={() => console.log('Setting button tapped')}
+              style={[styles.bookmarkButton, styles.shadow]}>
+              <Icon2
+                // name="bookmark"
+                name={this.state.isBookmarked ? 'bookmark' : 'bookmark-o'}
+                size={35}
+                backgroundColor="#79c8ec"
+                color="#79c8ec"
+              />
+            </TouchableOpacity>
+          )}>
+          <ScrollView>
+            {/* <View style={styles.imageContainer}>
+              <Image
+                style={styles.foodImage}
+                source={{uri: foodImage, cache: 'force-cache'}}
+              />
+            </View> */}
+            <View>
+              <View style={styles.bodyContainer}>
+                {/* <Text style={styles.foodName}>{foodName}</Text> */}
+                <View style={styles.ingredientContainer}>
+                  <FlatList
+                    data={ingredients}
+                    renderItem={this._renderIngredients}
+                    keyExtractor={(item, index) => index}
+                    scrollEnabled={false}
+                    numColumns={3}
+                  />
+                </View>
+                <View style={styles.stepListContainer}>
+                  {steps.map((step, index) => {
+                    return <Step step={step} index={index} />;
+                  })}
+                </View>
               </View>
             </View>
-          </View>
-        </ScrollView>
+          </ScrollView>
+        </AnimatedHeader>
       </View>
+      // {/* </SafeAreaView> */}
     );
   }
 }
@@ -166,9 +217,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  imageContainer: {
-    height: 200,
-  },
+  // imageContainer: {
+  //   height: 200,
+  // },
   bodyContainer: {
     marginHorizontal: 10,
     flex: 1,
@@ -185,13 +236,53 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     marginHorizontal: 30,
   },
-  foodImage: {
-    width: screenWidth,
-    height: 200,
-  },
+  // foodImage: {
+  //   width: screenWidth,
+  //   height: 200,
+  // },
   foodName: {
     fontSize: 35,
     fontWeight: '500',
+  },
+  animatedHeader: {
+    flex: 1,
+  },
+  // setting: {
+  //   right: 20,
+  //   bottom: 10,
+  // },
+  largeTitle: {
+    ...human.largeTitleObject,
+    fontSize: 30,
+    fontWeight: '600',
+    // color: 'white',
+    bottom: 20,
+    color: 'black',
+    lineHeight: 30,
+  },
+  smallTitle: {
+    fontSize: 20,
+    bottom: 0,
+    color: '#000',
+  },
+  backButton: {
+    left: 20,
+    bottom: 10,
+    top: 40,
+  },
+  bookmarkButton: {
+    right: 20,
+    bottom: 10,
+    top: 40,
+  },
+  shadow: {
+    shadowColor: 'black',
+    shadowOpacity: 0.5,
+    shadowRadius: 5,
+    shadowOffset: {
+      width: 2, // These can't both be 0
+      height: 2, // i.e. the shadow has to be offset in some way
+    },
   },
 });
 

@@ -1,12 +1,4 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow
- */
-
-import React, {Component, lazy} from 'react';
+import React from 'react';
 // import {
 //   SafeAreaView,
 //   StyleSheet,
@@ -60,7 +52,7 @@ const TabNavigator = createBottomTabNavigator(
   },
   {
     tabBarOptions: {
-      activeTintColor: '#5ccaf0',
+      activeTintColor: '#79c8ec',
       inactiveTintColor: 'lightgray',
       showIcon: true,
     },

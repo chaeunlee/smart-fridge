@@ -10,6 +10,7 @@ import {
   Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Dot from 'react-native-vector-icons/Octicons';
 import {human} from 'react-native-typography';
 import {
   deleteBookmark,
@@ -85,7 +86,7 @@ class Recipe extends React.PureComponent {
             <Text style={stylesForBookmark.name}>
               {name.length > 11 ? name.substring(0, 9) + '...' : name}
             </Text>
-            <TouchableOpacity onPress={() => this.tabBookmark(true)}>
+            {/* <TouchableOpacity onPress={() => this.tabBookmark(true)}>
               <Icon
                 name="bookmark"
                 size={30}
@@ -93,7 +94,7 @@ class Recipe extends React.PureComponent {
                 // iconStyle={{marginTop: 5}}
                 color="#5ccaf0"
               />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         </View>
       );
@@ -116,10 +117,14 @@ class Recipe extends React.PureComponent {
               />
               <View style={styles.labelContainer}>
                 <View style={styles.foodNameContainer}>
-                  <Text style={styles.foodName}>{name}</Text>
+                  <Text style={styles.foodName}>
+                    {name}
+                    <View style={{width: 10}} />
+                    <Dot name="primitive-dot" size={20} color="#5ccaf0" />
+                  </Text>
                 </View>
                 <View style={styles.bookmarkContainer}>
-                  <TouchableOpacity onPress={() => this.tabBookmark()}>
+                  {/* <TouchableOpacity onPress={() => this.tabBookmark()}>
                     <Icon
                       name={this.state.isBookmarked ? 'bookmark' : 'bookmark-o'}
                       size={35}
@@ -127,7 +132,7 @@ class Recipe extends React.PureComponent {
                       // iconStyle={{marginTop: 5}}
                       color="#5ccaf0"
                     />
-                  </TouchableOpacity>
+                  </TouchableOpacity> */}
                 </View>
               </View>
             </View>
@@ -150,6 +155,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   foodImage: {
+    // width: screenWidth - 20,
     width: screenWidth - 20,
     borderRadius: 10,
     height: 200,

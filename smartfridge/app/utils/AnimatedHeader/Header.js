@@ -6,8 +6,10 @@ import {
   View,
   TouchableOpacity,
   Dimensions,
-  Text,
+  findNodeHandle,
 } from 'react-native';
+import {BlurView} from '@react-native-community/blur';
+
 // import {SearchBar} from 'react-native-elements';
 
 const ios = Platform.OS === 'ios';
@@ -32,7 +34,12 @@ class Header extends React.PureComponent {
       scrollOffset: new Animated.Value(0),
       left: 25,
       bottom: 10,
+      viewRef: null,
     };
+  }
+
+  imageLoaded() {
+    this.setState({viewRef: findNodeHandle(this.backgroundImage)});
   }
 
   onScroll = e => {
@@ -41,7 +48,7 @@ class Header extends React.PureComponent {
     }
     this.state.scrollOffset.setValue(e.nativeEvent.contentOffset.y);
     // console.log(e.nativeEvent.contentOffset.y);
-    console.log('scrolloffset: ', this.state.scrollOffset);
+    // console.log('scrolloffset: ', this.state.scrollOffset);
     // console.log('left: ', this.state.left);
   };
 
@@ -82,9 +89,10 @@ class Header extends React.PureComponent {
   _getHeight = () => {
     const {scrollOffset} = this.state;
     const folded = this.headerHeight - toolbarHeight;
+    const tempSpace = this.props.tempSpace || 0; // for DetailRecipesView's image
     return scrollOffset.interpolate({
       inputRange: [0, folded],
-      outputRange: [this.headerHeight, toolbarHeight],
+      outputRange: [this.headerHeight, toolbarHeight + tempSpace],
       extrapolate: 'clamp',
     });
   };
@@ -113,12 +121,12 @@ class Header extends React.PureComponent {
       : 0;
   };
 
-  _getRightOpacity = () => {
+  _getToolbarOpacity = () => {
     const {scrollOffset} = this.state;
     const folded = this.headerHeight - toolbarHeight;
     return scrollOffset.interpolate({
-      inputRange: [0, folded - 5, folded],
-      outputRange: [1, 1, 0],
+      inputRange: [0, folded - 10, folded],
+      outputRange: [1, 0.9, 0],
       extrapolate: 'clamp',
     });
   };
@@ -133,6 +141,16 @@ class Header extends React.PureComponent {
           extrapolate: 'clamp',
         })
       : 0;
+  };
+
+  _getTitleColor = () => {
+    const {scrollOffset} = this.state;
+    const folded = this.headerHeight - toolbarHeight;
+    return scrollOffset.interpolate({
+      inputRange: [0, 50],
+      outputRange: ['white', 'black'],
+      extrapolate: 'clamp',
+    });
   };
 
   _getImageScaleStyle = () => {
@@ -163,19 +181,20 @@ class Header extends React.PureComponent {
       onBackPress,
       backStyle,
       backTextStyle,
+      title,
     } = this.props;
     const height = this._getHeight();
     const left = this._getLeft();
     const bottom = this._getBottom();
-    // const bottomForSearchbar = this._getSearchbarBottom();
     const opacity = this._getOpacity();
-    const opacityForButton = this._getRightOpacity();
+    const opacityForButton = this._getToolbarOpacity();
     const fontSize = this._getFontSize();
     const imageOpacity = this._getImageOpacity();
-    // const opacityForSearchBar = this._getSearchBarOpacity();
     const headerStyle = this.props.noBorder
       ? undefined
       : {borderBottomWidth: 0.5, borderColor: '#a7a6ab'};
+    const titleColor = this._getTitleColor();
+    const {scrollOffset} = this.state;
 
     return (
       <Animated.View
@@ -190,17 +209,59 @@ class Header extends React.PureComponent {
         {imageSource && (
           <Animated.Image
             style={[
-              StyleSheet.absoluteFill,
-              {width: null, height: null, opacity: imageOpacity},
+              // StyleSheet.absoluteFill,
+              styles.absolute,
+              {
+                width: null,
+                height: null,
+                opacity: imageOpacity,
+                borderRadius: 20,
+              },
               this._getImageScaleStyle(),
             ]}
-            source={imageSource}
             resizeMode="cover"
+            // blurRadius={5}
+            ref={img => {
+              this.backgroundImage = img;
+            }}
+            source={imageSource}
+            // style={styles.absolute}
+            onLoadEnd={this.imageLoaded.bind(this)}
+          />
+        )}
+        {/* {imageSource && (
+          <Animated.View
+            style={[
+              styles.absolute,
+              {
+                backgroundColor: 'white',
+                opacity: scrollOffset.interpolate({
+                  inputRange: [0, 100],
+                  outputRange: [0.2, 0],
+                  extrapolate: 'clamp',
+                }),
+              },
+            ]}
+          />
+        )} */}
+
+        {imageSource && (
+          <BlurView
+            style={styles.absolute}
+            viewRef={this.state.viewRef}
+            blurType="light"
+            blurAmount={3}
           />
         )}
         <View style={styles.toolbarContainer}>
           <View style={styles.statusBar} />
-          <View style={styles.toolbar}>
+          <Animated.View
+            style={[
+              styles.toolbar,
+              {
+                opacity: opacityForButton,
+              },
+            ]}>
             {this.props.renderLeft && this.props.renderLeft()}
             <TouchableOpacity
               disabled={!onBackPress}
@@ -214,14 +275,14 @@ class Header extends React.PureComponent {
                   backTextStyle,
                   {alignSelf: 'center', opacity: opacity},
                 ]}>
-                {this.props.backText || 'Back2'}
+                {this.props.backText || ''}
               </Animated.Text>
             </TouchableOpacity>
             <View style={styles.flexView} />
             <Animated.View style={{opacity: opacityForButton}}>
               {this.props.renderRight && this.props.renderRight()}
             </Animated.View>
-          </View>
+          </Animated.View>
         </View>
         <Animated.Text
           style={[
@@ -231,9 +292,10 @@ class Header extends React.PureComponent {
               left: left,
               bottom: bottom,
               fontSize,
+              color: titleStyle.color || titleColor,
             },
           ]}>
-          {this.props.title}
+          {title}
         </Animated.Text>
       </Animated.View>
     );
@@ -270,6 +332,13 @@ const styles = StyleSheet.create({
   },
   flexView: {
     flex: 1,
+  },
+  absolute: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
   },
 });
 

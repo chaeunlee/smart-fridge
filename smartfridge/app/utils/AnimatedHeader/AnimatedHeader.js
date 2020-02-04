@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {View} from 'react-native';
 import Header from './Header';
+// import CustomSearchBar from './CustomSearchBar';
 
 type Props = {
   style?: any,
@@ -22,6 +23,7 @@ type Props = {
 
 export default class AnimatedHeader extends React.PureComponent<Props> {
   _onScroll = e => {
+    // this.searchBar.onScroll(e);
     this.header.onScroll(e);
   };
 
@@ -32,28 +34,37 @@ export default class AnimatedHeader extends React.PureComponent<Props> {
         'AnimatedHeader must have ScrollView or FlatList as a child',
       );
     }
-    if (arr.length > 2) {
+    if (arr.length > 1) {
       console.error('Invalid child, only 1 child accepted');
     }
     const {headerMaxHeight, searchbarMaxHeight} = this.props;
-    const supplemantary = React.cloneElement(arr[0], {
-      style: {backgroundColor: 'red', height: headerMaxHeight + 100},
-      // ref: r => (this.scrollView = r),
-      // scrollEventThrottle: 16,
-      onScroll: this._onScroll,
-      // contentContainerStyle: {paddingTop: headerMaxHeight + 30 || 200},
-    });
-    const child = React.cloneElement(arr[1], {
+    // const supplemantary = React.cloneElement(arr[0], {
+    //   // style: {backgroundColor: 'red', height: headerMaxHeight + 200},
+    //   // style: {flex: 1},
+    //   // ref: r => (this.scrollView = r),
+    //   // scrollEventThrottle: 16,
+    //   // onScroll: this._onScroll,
+    //   onScroll: this._onScroll,
+    //   contentContainerStyle: {paddingTop: headerMaxHeight + 30 || 200},
+    // });
+    const child = React.cloneElement(arr[0], {
       style: {flex: 1},
       ref: r => (this.scrollView = r),
       scrollEventThrottle: 16,
       onScroll: this._onScroll,
       contentContainerStyle: {paddingTop: headerMaxHeight + 30 || 200},
-      // contentContainerStyle: {paddingTop: 10},
+      // contentContainerStyle: {paddingTop: 0},
     });
+    // console.log(this.header);
     return (
       <View style={this.props.style}>
         {/* {supplemantary} */}
+        {/* <CustomSearchBar
+          {...this.props}
+          ref={r => {
+            this.searchBar = r;
+          }}
+        /> */}
         {child}
         <Header
           {...this.props}

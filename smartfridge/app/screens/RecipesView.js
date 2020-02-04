@@ -12,17 +12,19 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import {SearchBar} from 'react-native-elements';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import Icon from 'react-native-vector-icons/Foundation';
+import {material, human} from 'react-native-typography';
+
 import {
   updateIngredient,
   deleteIngredient,
   queryAllIngredients,
   insertNewIngredient,
 } from '../models/IngredientSchemas';
-import NavigationService from '../navigation/NavigationService.js';
-import Recipe from '../components/Recipe';
 
-const screenWidth = Math.round(Dimensions.get('window').width);
+import Recipe from '../components/Recipe';
+import AnimatedHeader from '../utils/AnimatedHeader';
+import {SafeAreaView} from 'react-navigation';
 
 class RecipesView extends Component {
   constructor(props) {
@@ -48,7 +50,8 @@ class RecipesView extends Component {
   }
 
   static navigationOptions = {
-    title: 'Recipes',
+    // title: 'Recipes',
+    // header: null,
   };
 
   _reloadIngredientData = () => {
@@ -208,25 +211,54 @@ class RecipesView extends Component {
       );
     }
     return (
-      <View style={styles.container}>
-        <View>
-          <SearchBar
-            platform={Platform.OS === 'ios' ? 'ios' : 'android'}
-            inputContainerStyle={{backgroundColor: '#eaeaea'}}
-            containerStyle={{backgroundColor: 'white'}}
-            placeholder="Search for ingredients"
-            placeholderTextColor="#cacbcd"
-            onChangeText={this.updateSearch}
-            value={search}
-          />
+      <SafeAreaView style={styles.container}>
+        <AnimatedHeader
+          style={styles.animatedHeader}
+          title="Recipes"
+          renderRight={() => (
+            <TouchableOpacity
+              onPress={() => console.log('Edit button tapped')}
+              style={styles.setting}>
+              <Icon
+                name="filter"
+                size={35}
+                backgroundColor="transparent"
+                color="#79c8ec"
+              />
+            </TouchableOpacity>
+          )}
+          titleStyle={styles.largeTitle}
+          backTextStyle={styles.smallTitle}
+          headerMaxHeight={120}
+          disabled={false}>
           <FlatList
             data={recipeList}
             renderItem={this._renderItem}
             keyExtractor={this._keyExtractor}
             numColumns={1}
           />
-        </View>
-      </View>
+        </AnimatedHeader>
+
+        {/* <View style={styles.container}>
+          <View>
+            <SearchBar
+              platform={Platform.OS === 'ios' ? 'ios' : 'android'}
+              inputContainerStyle={{backgroundColor: '#eaeaea'}}
+              containerStyle={{backgroundColor: 'white'}}
+              placeholder="Search for ingredients"
+              placeholderTextColor="#cacbcd"
+              onChangeText={this.updateSearch}
+              value={search}
+            />
+            <FlatList
+              data={recipeList}
+              renderItem={this._renderItem}
+              keyExtractor={this._keyExtractor}
+              numColumns={1}
+            />
+          </View>
+        </View> */}
+      </SafeAreaView>
     );
   }
 }
@@ -234,12 +266,31 @@ class RecipesView extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    // alignItems: 'center',
+    // justifyContent: 'center',
   },
   loadingText: {
     fontSize: 20,
     paddingTop: 10,
+  },
+  animatedHeader: {
+    flex: 1,
+  },
+  setting: {
+    right: 20,
+    bottom: 10,
+  },
+  largeTitle: {
+    ...human.largeTitleObject,
+    fontSize: 35,
+    fontWeight: '600',
+    // left: 20,
+    bottom: 20,
+    color: '#000',
+  },
+  smallTitle: {
+    fontSize: 20,
+    bottom: 20,
   },
 });
 

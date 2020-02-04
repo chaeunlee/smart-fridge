@@ -24,8 +24,8 @@ import realm from '../models/IngredientSchemas';
 // import NavigationService from '../navigation/NavigationService.js';
 import Ingredient from '../components/Ingredient';
 import AnimatedHeader from '../utils/AnimatedHeader';
-
-const screenWidth = Math.round(Dimensions.get('window').width);
+import CustomSearchBar from '../utils/AnimatedHeader/CustomSearchBar';
+// import AnimatedSearchBar from '../utils/AnimatedSearchBar/AnimatedSearchBar';
 
 class MyFridgeView extends Component {
   constructor(props) {
@@ -57,12 +57,6 @@ class MyFridgeView extends Component {
   //     />
   //   ),
   // });
-
-  /*
-  아싸리 클래스를 하나 만들어서
-  플랫 리스트와 서치바 동시에 포함하는 것을 이용하자
-  그래서 그것을 child로 두면 나을듯
-   */
 
   _reloadData = () => {
     queryAllIngredients()
@@ -158,10 +152,10 @@ class MyFridgeView extends Component {
               onPress={() => console.log('Setting button tapped')}
               style={styles.setting}>
               <Icon
-                name="md-settings"
+                name="ios-settings"
                 size={40}
                 backgroundColor="transparent"
-                color="#5ccaf0"
+                color="#79c8ec"
               />
             </TouchableOpacity>
           )}
@@ -169,9 +163,6 @@ class MyFridgeView extends Component {
           backTextStyle={styles.smallTitle}
           headerMaxHeight={120}
           disabled={false}>
-          <View>
-            <Text>dsfsdf</Text>
-          </View>
           <FlatList
             // style={{flex: 1}}
             data={this.state.searchingIngredient}
@@ -193,36 +184,6 @@ class MyFridgeView extends Component {
             this._addIngredient(name);
           }}
         />
-        {/* <SearchBar
-          style={{flex: 1}}
-          platform={Platform.OS === 'ios' ? 'ios' : 'android'}
-          inputContainerStyle={{backgroundColor: '#eaeaea'}}
-          containerStyle={{backgroundColor: 'white'}}
-          placeholder="Search for ingredients"
-          placeholderTextColor="#cacbcd"
-          onChangeText={this._updateSearch}
-          value={search}
-        />
-        <FlatList
-          // style={{flex: 1}}
-          data={this.state.searchingIngredient}
-          renderItem={this._renderItem}
-          keyExtractor={this._keyExtractor}
-          numColumns={2}
-        />
-        <FloatingAction
-          actions={actions}
-          color="#79c8ec"
-          shadow={{
-            shadowOpacity: 0.1,
-            shadowOffset: {width: 0, height: 5},
-            shadowColor: '#000000',
-            shadowRadius: 3,
-          }}
-          onPressItem={name => {
-            this._addIngredient(name);
-          }}
-        /> */}
       </SafeAreaView>
     );
   }
@@ -231,6 +192,8 @@ class MyFridgeView extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    // alignItems: 'center',
+    // justifyContent: 'center',
   },
   animatedHeader: {
     flex: 1,
