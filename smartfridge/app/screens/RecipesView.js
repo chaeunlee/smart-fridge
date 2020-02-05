@@ -230,7 +230,8 @@ class RecipesView extends Component {
           titleStyle={styles.largeTitle}
           backTextStyle={styles.smallTitle}
           headerMaxHeight={120}
-          disabled={false}>
+          disabled={false}
+          noBorder={true}>
           <FlatList
             data={recipeList}
             renderItem={this._renderItem}

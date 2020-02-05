@@ -162,7 +162,8 @@ class MyFridgeView extends Component {
           titleStyle={styles.largeTitle}
           backTextStyle={styles.smallTitle}
           headerMaxHeight={120}
-          disabled={false}>
+          disabled={false}
+          noBorder={true}>
           <FlatList
             // style={{flex: 1}}
             data={this.state.searchingIngredient}

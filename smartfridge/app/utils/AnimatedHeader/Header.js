@@ -7,7 +7,9 @@ import {
   TouchableOpacity,
   Dimensions,
   findNodeHandle,
+  Text,
 } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 import {BlurView} from '@react-native-community/blur';
 
 // import {SearchBar} from 'react-native-elements';
@@ -194,7 +196,7 @@ class Header extends React.PureComponent {
       ? undefined
       : {borderBottomWidth: 0.5, borderColor: '#a7a6ab'};
     const titleColor = this._getTitleColor();
-    const {scrollOffset} = this.state;
+    // const {scrollOffset} = this.state;
 
     return (
       <Animated.View
@@ -209,7 +211,6 @@ class Header extends React.PureComponent {
         {imageSource && (
           <Animated.Image
             style={[
-              // StyleSheet.absoluteFill,
               styles.absolute,
               {
                 width: null,
@@ -220,39 +221,45 @@ class Header extends React.PureComponent {
               this._getImageScaleStyle(),
             ]}
             resizeMode="cover"
-            // blurRadius={5}
+            blurRadius={5}
             ref={img => {
               this.backgroundImage = img;
             }}
             source={imageSource}
-            // style={styles.absolute}
             onLoadEnd={this.imageLoaded.bind(this)}
           />
         )}
-        {/* {imageSource && (
+        {imageSource && (
           <Animated.View
             style={[
               styles.absolute,
               {
-                backgroundColor: 'white',
-                opacity: scrollOffset.interpolate({
-                  inputRange: [0, 100],
-                  outputRange: [0.2, 0],
-                  extrapolate: 'clamp',
-                }),
+                // backgroundColor: 'rgba(255, 255, 255, 0)',
+                backgroundColor: 'rgba(255, 255, 255, 0)',
+                height: height,
+                opacity: 1,
               },
-            ]}
-          />
-        )} */}
+            ]}>
+            <LinearGradient
+              colors={[
+                'rgba(255, 255, 255, 0)',
+                'rgba(255,255,255, 0.8)',
+                'rgba(255,255,255, 1)',
+              ]}
+              locations={[0.4, 0.7, 1]}
+              style={styles.linearGradient}
+            />
+          </Animated.View>
+        )}
 
-        {imageSource && (
+        {/* {imageSource && (
           <BlurView
             style={styles.absolute}
             viewRef={this.state.viewRef}
             blurType="light"
             blurAmount={3}
           />
-        )}
+        )} */}
         <View style={styles.toolbarContainer}>
           <View style={styles.statusBar} />
           <Animated.View
@@ -292,7 +299,8 @@ class Header extends React.PureComponent {
               left: left,
               bottom: bottom,
               fontSize,
-              color: titleStyle.color || titleColor,
+              // color: titleColor,
+              color: 'black',
             },
           ]}>
           {title}
@@ -339,6 +347,13 @@ const styles = StyleSheet.create({
     left: 0,
     bottom: 0,
     right: 0,
+  },
+  linearGradient: {
+    flex: 1,
+    paddingLeft: 15,
+    paddingRight: 15,
+    borderRadius: 5,
+    opacity: 1,
   },
 });
 

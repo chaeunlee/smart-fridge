@@ -161,7 +161,7 @@ class RecipesDetailView extends Component {
               <Icon
                 name="ios-arrow-back"
                 size={40}
-                backgroundColor="transparent"
+                // backgroundColor="transparent"
                 color="white"
               />
             </TouchableOpacity>
@@ -174,8 +174,9 @@ class RecipesDetailView extends Component {
                 // name="bookmark"
                 name={this.state.isBookmarked ? 'bookmark' : 'bookmark-o'}
                 size={35}
-                backgroundColor="#79c8ec"
-                color="#79c8ec"
+                // backgroundColor="#79c8ec"
+                // color="#79c8ec"
+                color="white"
               />
             </TouchableOpacity>
           )}>
@@ -257,7 +258,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     // color: 'white',
     bottom: 20,
-    color: 'black',
+    // color: 'black',
     lineHeight: 30,
   },
   smallTitle: {
