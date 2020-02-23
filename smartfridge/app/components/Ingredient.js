@@ -16,6 +16,15 @@ class Ingredient extends React.PureComponent {
     super(props);
   }
 
+  setEditMode = () => {
+    console.log(this.state.editMode);
+  };
+
+  testPrint = () => {
+    console.log('TEATAERARA');
+    console.log(this.state.editMode);
+  };
+
   pressIngredient = () => {
     this.props.navigation.navigate('DetailIngredient', {
       id: this.props.id,
@@ -32,8 +41,23 @@ class Ingredient extends React.PureComponent {
     // });
   };
 
+  _renderEditMode = () => {
+    return (
+      <TouchableOpacity
+        onPress={() =>
+          deleteIngredient(this.props.id)
+            .then()
+            .catch(error => console.log(`Error occurs on deleting: ${error}`))
+        }
+        style={styles.delete}>
+        <Text style={styles.deleteText}>Delete</Text>
+      </TouchableOpacity>
+    );
+  };
+
   render() {
-    const {image, name, desc, forMyFridgeView} = this.props;
+    const {image, name, desc, forMyFridgeView, editMode} = this.props;
+    // const {image, name, desc, forMyFridgeView} = this.state;
 
     if (forMyFridgeView) {
       return (
@@ -45,16 +69,7 @@ class Ingredient extends React.PureComponent {
               <Text style={styles.ingredientDesc}>{desc}</Text>
             </View>
           </TouchableOpacity>
-          <Button
-            title="delete(temp)"
-            onPress={() =>
-              deleteIngredient(this.props.id)
-                .then()
-                .catch(error =>
-                  console.log(`Error occurs on deleting: ${error}`),
-                )
-            }
-          />
+          {editMode ? this._renderEditMode() : null}
         </View>
       );
     } else {
@@ -74,6 +89,11 @@ const styles = StyleSheet.create({
   /*  For My Fridge View  */
   container: {
     flex: 0.5,
+  },
+  delete: {alignItems: 'center', justifyContent: 'center'},
+  deleteText: {
+    fontSize: 15,
+    color: 'red',
   },
   item: {
     flex: 0.5,

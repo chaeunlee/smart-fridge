@@ -17,6 +17,7 @@ import Icon2 from 'react-native-vector-icons/FontAwesome';
 import Ingredient from '../components/Ingredient';
 import Step from '../components/Step';
 import AnimatedHeader from '../utils/AnimatedHeader';
+import {insertNewBookmark} from '../models/BookmarkSchemas';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
 
@@ -34,6 +35,18 @@ class RecipesDetailView extends Component {
       steps: [],
     };
   }
+
+  _addBookmarkToModel = () => {
+    const newBookmark = {
+      id: this.state.foodId,
+      name: this.state.foodName,
+      image: this.state.foodImage,
+      creationDate: new Date(),
+    };
+    insertNewBookmark(newBookmark)
+      .then()
+      .catch(error => console.log(`Error occurs: ${error}`));
+  };
 
   static navigationOptions = {
     title: 'Detail Recipe',
@@ -168,7 +181,10 @@ class RecipesDetailView extends Component {
           )}
           renderRight={() => (
             <TouchableOpacity
-              onPress={() => console.log('Setting button tapped')}
+              onPress={() => {
+                this._addBookmarkToModel();
+                console.log('Bookmark button tapped');
+              }}
               style={[styles.bookmarkButton, styles.shadow]}>
               <Icon2
                 // name="bookmark"

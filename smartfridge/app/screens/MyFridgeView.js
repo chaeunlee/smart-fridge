@@ -34,6 +34,7 @@ class MyFridgeView extends Component {
       ingredientList: [],
       search: '',
       searchingIngredient: [],
+      editMode: false,
     };
     this._reloadData();
     realm.addListener('change', () => {
@@ -90,14 +91,20 @@ class MyFridgeView extends Component {
 
   _keyExtractor = (item, index) => item.id;
 
+  _getIngreImage = name => {
+    return '../assets/ingredients/dummy.png';
+  };
+
   _renderItem = ({item}) => (
     <Ingredient
       id={item.id}
       name={item.name}
       // image={item.image}
-      image={require('../assets/ingredients/tomato.png')}
+      image={require('../assets/ingredients/dummy.png')}
+      // image={uri: '../assets/ingredients/dummy.png'}
       desc={item.description}
       forMyFridgeView={true}
+      editMode={this.state.editMode}
       navigation={this.props.navigation}
     />
   );
@@ -114,6 +121,15 @@ class MyFridgeView extends Component {
       case 'scan_barcode':
         break;
     }
+  };
+
+  _onPressEdit = () => {
+    console.log('Edit button tapped');
+    this.setState({editMode: !this.state.editMode});
+    // this.state.ingredientList.forEach(ingredient => {
+    //   console.log(ingredient);
+    //   // console.log(Ingredient.);
+    // });
   };
 
   render() {
@@ -149,14 +165,9 @@ class MyFridgeView extends Component {
           title="My Fridge"
           renderRight={() => (
             <TouchableOpacity
-              onPress={() => console.log('Setting button tapped')}
+              onPress={() => this._onPressEdit()}
               style={styles.setting}>
-              <Icon
-                name="ios-settings"
-                size={40}
-                backgroundColor="transparent"
-                color="#79c8ec"
-              />
+              <Text style={styles.editButton}>Edit</Text>
             </TouchableOpacity>
           )}
           titleStyle={styles.largeTitle}
@@ -202,6 +213,10 @@ const styles = StyleSheet.create({
   setting: {
     right: 20,
     bottom: 10,
+  },
+  editButton: {
+    fontSize: 20,
+    color: '#79c8ec',
   },
   largeTitle: {
     ...human.largeTitleObject,
