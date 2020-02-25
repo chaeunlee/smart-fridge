@@ -20,11 +20,6 @@ class Ingredient extends React.PureComponent {
     console.log(this.state.editMode);
   };
 
-  testPrint = () => {
-    console.log('TEATAERARA');
-    console.log(this.state.editMode);
-  };
-
   pressIngredient = () => {
     this.props.navigation.navigate('DetailIngredient', {
       id: this.props.id,

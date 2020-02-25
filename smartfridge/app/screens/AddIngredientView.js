@@ -9,9 +9,15 @@ import {
   Dimensions,
   TouchableOpacity,
   TextInput,
+  Image,
 } from 'react-native';
+
+import SelectIngredientIcon from './SelectIngredientIcon';
+
 import {SearchBar} from 'react-native-elements';
 import {human} from 'react-native-typography';
+import Modal from 'react-native-modal';
+
 import {insertNewIngredient} from '../models/IngredientSchemas';
 
 const screenWidth = Math.round(Dimensions.get('window').width);
@@ -24,6 +30,7 @@ class AddIngredientView extends Component {
       name: '',
       description: '',
       search: '',
+      isModalVisible: true,
     };
   }
 
@@ -63,19 +70,41 @@ class AddIngredientView extends Component {
       .catch(error => console.log(`Error occurs: ${error}`));
   };
 
+  _toggleModal = () => {
+    this.setState({isModalVisible: !this.state.isModalVisible});
+    // return <SelectIngredientIcon></SelectIngredientIcon>;
+  };
+
   render() {
     const {name, description} = this.state;
     return (
-      <SafeAreaView style={styles.container}>
-        <View style={styles.header}>
-          <Button
-            style={styles.button}
-            title="Cancel"
-            onPress={() => {
-              this.props.navigation.goBack();
-            }}
-          />
-          {/* <Button
+      <Modal
+        isVisible={this.state.isModalVisible}
+        style={{
+          marginTop: 100,
+          marginBottom: 0,
+          alignItems: 'center',
+          backfaceVisibility: 'hidden',
+        }}
+        deviceWidth={screenWidth}
+        onSwipeComplete={() => {
+          this._toggleModal();
+          this.props.navigation.goBack();
+        }}
+        swipeDirection={['down']}>
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <View style={styles.modalBar} />
+            {/* <Button
+              style={styles.button}
+              title="Cancel"
+              onPress={() => {
+                // this._selectIngredientIcon();
+                this.setState({isModalVisible: false});
+                this.props.navigation.goBack();
+              }}
+            /> */}
+            {/* <Button
             style={styles.button}
             title="Add "
             onPress={() => {
@@ -83,49 +112,61 @@ class AddIngredientView extends Component {
               this.props.navigation.goBack();
             }}
           /> */}
-        </View>
-        <Text style={styles.title}>Add Ingredients</Text>
-        <View style={styles.inputViewContainer}>
-          <View style={styles.imageContainer}>
-            <Text style={styles.imageText}>No image</Text>
           </View>
-          <View style={styles.nameContainer}>
-            <Text style={styles.text}>Name*</Text>
-            <View style={styles.nameInputView}>
-              <TextInput
-                style={styles.textInput}
-                onChangeText={text => this._onChangeText(text, true)}
-                value={name}
+          <Text style={styles.title}>Add Ingredients</Text>
+          <View style={styles.inputViewContainer}>
+            <View style={styles.imageContainer}>
+              <Image
+                style={{flex: 1}}
+                resizeMode="contain"
+                source={require('../assets/ingredients/dummy.png')}
               />
             </View>
-          </View>
-          <View style={styles.nameContainer}>
-            <Text style={styles.text}>Description</Text>
-            <View style={styles.nameInputView}>
-              <TextInput
-                style={styles.textInput}
-                onChangeText={text => this._onChangeText(text, false)}
-                value={description}
-              />
+            <View style={styles.nameContainer}>
+              <Text style={styles.text}>Name*</Text>
+              <View style={styles.nameInputView}>
+                <TextInput
+                  style={styles.textInput}
+                  onChangeText={text => this._onChangeText(text, true)}
+                  value={name}
+                />
+              </View>
             </View>
-          </View>
+            <View style={styles.nameContainer}>
+              <Text style={styles.text}>Description</Text>
+              <View style={styles.nameInputView}>
+                <TextInput
+                  style={styles.textInput}
+                  onChangeText={text => this._onChangeText(text, false)}
+                  value={description}
+                />
+              </View>
+            </View>
+            <Text style={styles.subText}>* required</Text>
 
-          {/* <View style={styles.addButtonContainer}> */}
-          <TouchableOpacity
-            onPress={() => {
-              this._addIngredientToModel();
-              this.props.navigation.goBack();
-            }}
-            style={styles.buttonContainer}>
-            <View style={styles.textBox}>
+            {/* <View style={styles.addButtonContainer}> */}
+            <TouchableOpacity
+              onPress={() => {
+                this._addIngredientToModel();
+                this._toggleModal();
+                this.props.navigation.goBack();
+              }}
+              style={styles.buttonContainer}>
               <Text style={styles.buttonText}>Done</Text>
-            </View>
-          </TouchableOpacity>
-          <Text style={styles.subText}>* required</Text>
-          {/* </View> */}
-        </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                this._toggleModal();
+                this.props.navigation.goBack();
+              }}
+              style={styles.cancelButtonContainer}>
+              <Text style={styles.cancelButtonText}>Cancel</Text>
+            </TouchableOpacity>
 
-        {/* <SearchBar
+            {/* </View> */}
+          </View>
+
+          {/* <SearchBar
           platform={Platform.OS === 'ios' ? 'ios' : 'android'}
           // showCancel={true}
           cancelButtonTitle=""
@@ -143,7 +184,8 @@ class AddIngredientView extends Component {
           onChangeText={this._updateSearch}
           value={search}
         /> */}
-      </SafeAreaView>
+        </View>
+      </Modal>
     );
   }
 }
@@ -151,29 +193,41 @@ class AddIngredientView extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    marginHorizontal: 10,
+    // width: '100%',
+    // height: '95%',
+    // marginHorizontal: 10,
+    backgroundColor: 'white',
+    // alignItems: 'center',
+    // justifyContent: 'center',
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
   },
 
   header: {
     height: 50,
     flexDirection: 'row',
-    alignItems: 'flex-end',
-    justifyContent: 'space-between',
+    paddingTop: 15,
+    justifyContent: 'center',
     marginHorizontal: 5,
+  },
+  modalBar: {
+    width: 50,
+    height: 5,
+    backgroundColor: 'gray',
+    borderRadius: 10,
   },
   title: {
     ...human.titleObject,
     fontSize: 45,
     fontWeight: '600',
-    marginHorizontal: 10,
+    marginHorizontal: 15,
     flex: 0.1,
   },
   inputViewContainer: {
     flex: 1,
-    // marginTop: 4,
-    // backgroundColor: 'red',
     alignItems: 'center',
-    justifyContent: 'center',
+    marginTop: 40,
+    // justifyContent: 'center',
   },
   text: {
     fontSize: 18,
@@ -240,8 +294,22 @@ const styles = StyleSheet.create({
     backgroundColor: '#79c8ec',
     marginTop: 35,
   },
+  cancelButtonContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 10,
+    height: 50,
+    width: screenWidth - 30,
+    backgroundColor: 'white',
+    // marginTop: 35,
+  },
   buttonText: {
     color: 'white',
+    fontSize: 20,
+    fontWeight: '500',
+  },
+  cancelButtonText: {
+    color: '#79c8ec',
     fontSize: 20,
     fontWeight: '500',
   },

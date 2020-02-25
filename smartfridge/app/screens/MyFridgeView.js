@@ -10,6 +10,9 @@ import {
   TouchableOpacity,
   Text,
 } from 'react-native';
+
+import AddIngredientView from './AddIngredientView';
+
 import {SearchBar} from 'react-native-elements';
 import {material, human} from 'react-native-typography';
 import {FloatingAction} from 'react-native-floating-action';
@@ -115,6 +118,7 @@ class MyFridgeView extends Component {
       case 'search':
         // NavigationService.navigateForFridgeView('AddIngredient');
         this.props.navigation.navigate('AddIngredient');
+        // return <AddIngredientView />;
         break;
       case 'scan_receipt':
         break;

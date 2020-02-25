@@ -27,6 +27,7 @@ class RecipesDetailView extends Component {
     const {navigation} = this.props;
     this.state = {
       isLoading: true,
+      isBookmarked: false,
       dataSource: null,
       foodId: navigation.getParam('id'),
       foodImage: navigation.getParam('image'),
